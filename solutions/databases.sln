@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32825.248
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "GamblingTracker", "..\SB.Databases\GamblingTracker\GamblingTracker.sqlproj", "{9B43F40E-0982-44EC-8487-904810D6EC83}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "NHL", "..\SB.Databases\NHL\NHL.sqlproj", "{4848AB02-95D0-48F4-8440-F684B90350F6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9B43F40E-0982-44EC-8487-904810D6EC83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B43F40E-0982-44EC-8487-904810D6EC83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B43F40E-0982-44EC-8487-904810D6EC83}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{9B43F40E-0982-44EC-8487-904810D6EC83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B43F40E-0982-44EC-8487-904810D6EC83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B43F40E-0982-44EC-8487-904810D6EC83}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{4848AB02-95D0-48F4-8440-F684B90350F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4848AB02-95D0-48F4-8440-F684B90350F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4848AB02-95D0-48F4-8440-F684B90350F6}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{4848AB02-95D0-48F4-8440-F684B90350F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4848AB02-95D0-48F4-8440-F684B90350F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4848AB02-95D0-48F4-8440-F684B90350F6}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C6B169C0-26E1-4CB7-9A34-E7A899FD56D9}
+	EndGlobalSection
+EndGlobal
