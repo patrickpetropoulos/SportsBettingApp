@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Newtonsoft.Json.Linq;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -25,12 +26,12 @@ public class TokenController : ControllerBase
     _configuration = configuration;
   }
 
-  public static ApplicationUser GetUserFromClaims( ClaimsPrincipal user, ApplicationDbContext context )
+  public static ApplicationUser? GetUserFromClaims( ClaimsPrincipal user, ApplicationDbContext context )
   {
     //TODO add try catch
     var userEmail = user.Claims.First( c => c.Type.Equals( "email" ) ).Value;
 
-    return context.Users.First( c => c.Email.Equals( userEmail ) );
+    return context.Users.FirstOrDefault( c => c.Email.Equals( userEmail ) );
   }
 
   [Route( "/token" )]
@@ -55,18 +56,20 @@ public class TokenController : ControllerBase
   [Route( "/test" )]
   [HttpGet]
   [Authorize( AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin" )]
-  public async Task<IActionResult> Get()
+  public async Task<IResult> Get()
   {
     var user = GetUserFromClaims( User, _context );
+    var claims = _userManager.GetClaimsAsync(user);
+    var roles = _userManager.GetRolesAsync(user);
 
-    var output = new
-    {
-      Test = "hello " + user.Email
-    };
+    var json = new JObject();
+    
+    json.Add("user", user.ToString());
+    json.Add("roles", roles.ToString());
 
-    await Task.Delay( 1000 );
-
-    return new ObjectResult( output );
+    var result = new {user = user, roles = roles, claims = claims};
+    
+    return Results.Ok(result);
   }
 
   private async Task<bool> IsValidLoginInfo( string username, string password )

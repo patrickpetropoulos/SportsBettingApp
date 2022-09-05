@@ -16,26 +16,25 @@ namespace SB.Server.WebApp.IntegrationTests;
 [SetUpFixture]
 public static class Config
 {
-  private static IConfigurationRoot _configuration = null!;
-  private static IServiceScopeFactory _scopeFactory = null!;
-  private static Checkpoint _checkpoint = null!;
-  private static string? _currentUserId;
-
   public static WebApplicationFactory<Program>? _app = null;
   private static string _token;
 
-  public static HttpClient GetClient()
+  public static HttpClient? GetClientWithUnauthorizedUser()
+  {
+    return _app?.CreateClient();
+  }
+  public static HttpClient? GetClient()
   {
     var client = _app?.CreateClient();
-    client.DefaultRequestHeaders.TryAddWithoutValidation( "Authorization", $"Bearer {_token}" );
+    client?.DefaultRequestHeaders.TryAddWithoutValidation( "Authorization", $"Bearer {_token}" );
 
     return client;
   }
 
-  public static HttpClient GetClient( string token )
+  public static HttpClient? GetClient( string token )
   {
     var client = _app?.CreateClient();
-    client.DefaultRequestHeaders.TryAddWithoutValidation( "Authorization", $"Bearer {token}" );
+    client?.DefaultRequestHeaders.TryAddWithoutValidation( "Authorization", $"Bearer {token}" );
 
     return client;
   }
@@ -67,10 +66,10 @@ public static class Config
       .AddJsonFile( "appsettings.Testing.json", true, true )
       .AddEnvironmentVariables();
 
-    var _configuration = configBuilder.Build();
+    var configuration = configBuilder.Build();
 
-    var username = _configuration["PowerUser:Username"];
-    var password = _configuration["PowerUser:Password"];
+    var username = configuration["PowerUser:Username"];
+    var password = configuration["PowerUser:Password"];
 
     var client = _app?.CreateClient();
     var response = await client.GetAsync( $"/token?username={username}&password={password}" );
