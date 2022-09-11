@@ -6,11 +6,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Newtonsoft.Json.Linq;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
+using Microsoft.EntityFrameworkCore;
 namespace SB.Server.WebApp.Controllers;
+
 [ApiController]
 [Route( "api" )]
 public class TokenController : ControllerBase
@@ -26,12 +24,12 @@ public class TokenController : ControllerBase
     _configuration = configuration;
   }
 
-  public static ApplicationUser? GetUserFromClaims( ClaimsPrincipal user, ApplicationDbContext context )
+  public static async  Task<ApplicationUser?> GetUserFromClaims( ClaimsPrincipal user, ApplicationDbContext context )
   {
     //TODO add try catch
     var userEmail = user.Claims.First( c => c.Type.Equals( "email" ) ).Value;
 
-    return context.Users.FirstOrDefault( c => c.Email.Equals( userEmail ) );
+    return await context.Users.FirstOrDefaultAsync( c => c.Email.Equals( userEmail ) );
   }
 
   [Route( "/token" )]
@@ -58,16 +56,11 @@ public class TokenController : ControllerBase
   [Authorize( AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin" )]
   public async Task<IResult> Get()
   {
-    var user = GetUserFromClaims( User, _context );
-    var claims = _userManager.GetClaimsAsync(user);
-    var roles = _userManager.GetRolesAsync(user);
+    var user = await GetUserFromClaims( User, _context );
+    var claims = await _userManager.GetClaimsAsync(user!);
+    var roles = await _userManager.GetRolesAsync(user!);
 
-    var json = new JObject();
-    
-    json.Add("user", user.ToString());
-    json.Add("roles", roles.ToString());
-
-    var result = new {user = user, roles = roles, claims = claims};
+    var result = new {user, roles, claims};
     
     return Results.Ok(result);
   }

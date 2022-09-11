@@ -1,16 +1,14 @@
-using Microsoft.EntityFrameworkCore;
-using SB.Server.WebApp;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+
+namespace SB.Server.WebApp;
 
 public class Program{
-  public async static Task Main( string[] args )
+  public static void Main( string[] args )
   {
     var builder = WebApplication.CreateBuilder( args );
 
@@ -26,34 +24,34 @@ public class Program{
     builder.Services.AddSwaggerGen();
 
     builder.Services.AddCors( options => options.AddPolicy( "AllowAll", p => p.AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader() ) );
+      .AllowAnyMethod()
+      .AllowAnyHeader() ) );
 
 
     builder.Services.AddDbContext<ApplicationDbContext>( options =>
-                 options.UseSqlServer(
-                     builder.Configuration.GetConnectionString( "Users" ),
-                     b => b.MigrationsAssembly( typeof( ApplicationDbContext ).Assembly.FullName ) ) );
+      options.UseSqlServer(
+        builder.Configuration.GetConnectionString( "Users" ),
+        b => b.MigrationsAssembly( typeof( ApplicationDbContext ).Assembly.FullName ) ) );
 
     builder.Services.AddIdentityCore<ApplicationUser>()
-                          .AddRoles<ApplicationRole>()
-                          .AddEntityFrameworkStores<ApplicationDbContext>()
-                          .AddDefaultTokenProviders();
+      .AddRoles<ApplicationRole>()
+      .AddEntityFrameworkStores<ApplicationDbContext>()
+      .AddDefaultTokenProviders();
 
     builder.Services.AddAuthentication( JwtBearerDefaults.AuthenticationScheme )
-                         .AddJwtBearer( options =>
-                         {
-                           options.TokenValidationParameters = new TokenValidationParameters
-                           {
-                             ValidateIssuer = false,
-                             ValidateAudience = false,
-                             ValidateLifetime = true,
-                             ValidateIssuerSigningKey = true,
-                             IssuerSigningKey = new SymmetricSecurityKey(
-                                   Encoding.UTF8.GetBytes( builder.Configuration["JWT"] ) ),
-                             ClockSkew = TimeSpan.Zero
-                           };
-                         } );
+      .AddJwtBearer( options =>
+      {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+          ValidateIssuer = false,
+          ValidateAudience = false,
+          ValidateLifetime = true,
+          ValidateIssuerSigningKey = true,
+          IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes( builder.Configuration["JWT"] ) ),
+          ClockSkew = TimeSpan.Zero
+        };
+      } );
 
     builder.Services.AddAuthorization( options =>
     {
@@ -88,7 +86,5 @@ public class Program{
       DbSeeding.CreatePowerUser( userManager, roleManager, app.Configuration ).GetAwaiter().GetResult();
     }
     app.Run();
-
-
   }
 }

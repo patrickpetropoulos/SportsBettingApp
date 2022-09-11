@@ -1,40 +1,32 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Linq;
-using NUnit.Framework;
-using Respawn;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SB.Server.WebApp.IntegrationTests;
 
 [SetUpFixture]
 public static class Config
 {
-  public static WebApplicationFactory<Program>? _app = null;
-  private static string _token;
+  private static WebApplicationFactory<Program> _app = null!;
+  private static string _token = null!;
 
-  public static HttpClient? GetClientWithUnauthorizedUser()
+  public static HttpClient GetClientWithUnauthorizedUser()
   {
-    return _app?.CreateClient();
+    return _app.CreateClient();
   }
-  public static HttpClient? GetClient()
+  public static HttpClient GetClient()
   {
-    var client = _app?.CreateClient();
-    client?.DefaultRequestHeaders.TryAddWithoutValidation( "Authorization", $"Bearer {_token}" );
+    var client = _app.CreateClient();
+    client.DefaultRequestHeaders.TryAddWithoutValidation( "Authorization", $"Bearer {_token}" );
 
     return client;
   }
 
-  public static HttpClient? GetClient( string token )
+  public static HttpClient GetClient( string token )
   {
-    var client = _app?.CreateClient();
-    client?.DefaultRequestHeaders.TryAddWithoutValidation( "Authorization", $"Bearer {token}" );
+    var client = _app.CreateClient();
+    client.DefaultRequestHeaders.TryAddWithoutValidation( "Authorization", $"Bearer {token}" );
 
     return client;
   }
@@ -60,7 +52,6 @@ public static class Config
     //delete all users and stuff from database
     //delete all other data from database
     //seed database
-    var test = Directory.GetCurrentDirectory();
     var configBuilder = new ConfigurationBuilder()
       .SetBasePath( Directory.GetCurrentDirectory() )
       .AddJsonFile( "appsettings.Testing.json", true, true )
@@ -71,7 +62,7 @@ public static class Config
     var username = configuration["PowerUser:Username"];
     var password = configuration["PowerUser:Password"];
 
-    var client = _app?.CreateClient();
+    var client = _app.CreateClient();
     var response = await client.GetAsync( $"/token?username={username}&password={password}" );
 
     var result = await response.Content.ReadAsStringAsync();

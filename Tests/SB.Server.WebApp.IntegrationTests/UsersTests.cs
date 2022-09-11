@@ -1,9 +1,4 @@
 ﻿using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SB.Server.WebApp.IntegrationTests;
 public class UsersTests
@@ -16,10 +11,8 @@ public class UsersTests
     var result = await response.Content.ReadAsStringAsync();
     var json = JObject.Parse( result );
 
-    var statueCode = (int)json["statusCode"];
+    var statueCode = (int)json["statusCode"]!;
 
     Assert.AreEqual( 200, statueCode );
   }
- 
-
 }
