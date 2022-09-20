@@ -64,4 +64,4 @@ def downloadLineups(date):
     # 	print("-------------------------------")
 
 #downloadLineups("2021-08-08")
-downloadLineups("2021-09-10")
+downloadLineups("2022-09-10")

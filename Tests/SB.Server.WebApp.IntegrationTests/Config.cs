@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
+using SB.Utilities;
 
 namespace SB.Server.WebApp.IntegrationTests;
 
@@ -69,25 +70,6 @@ public static class Config
     var json = JObject.Parse( result );
 
     //TODO Change to JsonUtilitiesClass
-    _token = GetString( json, "accessToken" );
+    _token = JSONUtilities.GetString( json, "accessToken" );
   }
-  public static String GetString( JObject obj, String name, String defaultValue = "" )
-  {
-    var v = (JValue)obj[name];
-
-    if( v == null )
-    {
-      return defaultValue;
-    }
-
-    var str = ( v ).Value;
-
-    if( str == null )
-    {
-      return defaultValue;
-    }
-
-    return str.ToString();
-  }
-
 }
