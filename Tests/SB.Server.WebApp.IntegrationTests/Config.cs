@@ -12,6 +12,8 @@ public static class Config
   private static WebApplicationFactory<Program> _app = null!;
   private static string _token = null!;
 
+  // can set up multiple clients with different claims/roles and test all of them
+  // Have many "power users" for all testing of all endpoints
   public static HttpClient GetClientWithUnauthorizedUser()
   {
     return _app.CreateClient();

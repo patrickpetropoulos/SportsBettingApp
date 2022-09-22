@@ -34,6 +34,7 @@ public class TokenController : ControllerBase
 
   [Route( "/token" )]
   [HttpGet]
+  [AllowAnonymous]
   //TODO move params into body of request, figure out
   public async Task<IActionResult> Create( string username, string password )
   {
@@ -53,6 +54,7 @@ public class TokenController : ControllerBase
 
   [Route( "/test" )]
   [HttpGet]
+  //Can have multiple authorize
   [Authorize( AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin" )]
   public async Task<IResult> Get()
   {
@@ -84,6 +86,8 @@ public class TokenController : ControllerBase
 
     var claims = new List<Claim>
             {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
                 new Claim("username", user.UserName),
                 new Claim("email", user.Email),
                 new Claim(JwtRegisteredClaimNames.Nbf, new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds().ToString()),
@@ -100,7 +104,14 @@ public class TokenController : ControllerBase
             new SigningCredentials(
                 new SymmetricSecurityKey( Encoding.UTF8.GetBytes( _configuration.GetSection( "JWT" ).Value ) ),
                 SecurityAlgorithms.HmacSha256 ) ),
-        new JwtPayload( claims ) );
+        new JwtPayload( 
+          //TODO move these to appsettings
+          "PatricksApp", //Issuer
+        "PatricksAppUser", //Audience
+        claims, 
+        DateTime.UtcNow, //When token is valid
+        DateTime.UtcNow.AddDays(1) //When token will expire  TODO do a test that token expires
+        ) );
 
     var output = new
     {
