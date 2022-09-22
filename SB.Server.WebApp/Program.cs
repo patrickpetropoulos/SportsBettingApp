@@ -30,7 +30,7 @@ public class Program{
 
     builder.Services.AddDbContext<ApplicationDbContext>( options =>
       options.UseSqlServer(
-        builder.Configuration.GetConnectionString( "Users" ),
+        builder.Configuration.GetConnectionString( "Default" ),
         b => b.MigrationsAssembly( typeof( ApplicationDbContext ).Assembly.FullName ) ) );
 
     builder.Services.AddIdentityCore<ApplicationUser>()
