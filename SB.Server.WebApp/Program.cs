@@ -136,7 +136,7 @@ public class Program{
     }
     if( app.Environment.IsEnvironment( "Testing" ) )
     {
-
+      Console.WriteLine("#### PATRICK : I am running Testing in Program.cs");
     }
     app.UseHttpsRedirection();
 

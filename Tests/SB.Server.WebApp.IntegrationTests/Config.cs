@@ -12,7 +12,7 @@ public static class Config
   private static WebApplicationFactory<Program> _app = null!;
   private static string _token = null!;
 
-  // can set up multiple clients with different claims/roles and test all of them
+  // TODO can set up multiple clients with different claims/roles and test all of them
   // Have many "power users" for all testing of all endpoints
   public static HttpClient GetClientWithUnauthorizedUser()
   {
@@ -55,11 +55,25 @@ public static class Config
     //delete all users and stuff from database
     //delete all other data from database
     //seed database
+
+    var jsonPath = "appsettings.json";
+
+    //Check if testing file exists
+    //Need this check for building and testing in azure devops
+    //Since in azure substitution is done, can handle having separate db for testing.
+    //For now in code, when running tests locally, do this check
+    if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "appsettings.Testing.json")))
+    {
+      Console.WriteLine("#### PATRICK : App settings Testing Exists");
+      jsonPath = "appsettings.Testing.json";
+    }
+    
     var configBuilder = new ConfigurationBuilder()
       .SetBasePath( Directory.GetCurrentDirectory() )
-      .AddJsonFile( "appsettings.Testing.json", true, true )
+      .AddJsonFile( jsonPath, true, true )
       .AddEnvironmentVariables();
 
+    
     var configuration = configBuilder.Build();
 
     var username = configuration["PowerUser:Username"];
@@ -71,7 +85,8 @@ public static class Config
     var result = await response.Content.ReadAsStringAsync();
     var json = JObject.Parse( result );
 
-    //TODO Change to JsonUtilitiesClass
+    
+    
     _token = JSONUtilities.GetString( json, "accessToken" );
   }
 }
