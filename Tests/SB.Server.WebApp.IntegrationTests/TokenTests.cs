@@ -14,9 +14,8 @@ public class TokenTests
         Assert.AreEqual( HttpStatusCode.OK, response.StatusCode);
         
         var result = await response.Content.ReadAsStringAsync();
-        var allJson = JObject.Parse( result );
+        var json = JObject.Parse( result );
 
-        var json = (JObject?)allJson["value"];
         var user = (JObject?)json?["user"];
         var username = user?["userName"] + "";
         Assert.AreEqual( "poweruser", username );

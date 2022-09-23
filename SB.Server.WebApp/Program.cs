@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using SB.Server.WebApp.Endpoints;
 using Swashbuckle.AspNetCore;
 
 namespace SB.Server.WebApp;
@@ -21,7 +22,7 @@ public class Program{
     JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.Clear();
 
 
-    builder.Services.AddControllers();
+    //builder.Services.AddControllers();
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     //https://stackoverflow.com/a/62864495
@@ -29,12 +30,12 @@ public class Program{
       c.SwaggerDoc("v1", new OpenApiInfo
       {
         Version = "v1",
-        Title = "Chat API",
-        Description = "Chat API Swagger Surface",
+        Title = "SportsBetting API",
+        Description = "SportsBetting API Swagger Surface",
         Contact = new OpenApiContact
         {
-          Name = "João Victor Ignacio",
-          Email = "ignaciojvig@gmail.com",
+          Name = "Patrick Petropoulos",
+          Email = "patrickperopoulos@gmail.com",
           Url = new Uri("https://www.linkedin.com/in/ignaciojv/")
         },
         License = new OpenApiLicense
@@ -143,12 +144,10 @@ public class Program{
     app.UseAuthentication();
     app.UseAuthorization();
 
-    app.MapControllers();
+    //app.MapControllers();
 
-    app.MapGet("/api/PatrickTest", () =>
-    {
-      return Results.Ok("me");
-    });
+    //Mapping Endpoints
+    app.MapTokenEndpoints();
 
     using( var scope = app.Services.CreateScope() )
     {

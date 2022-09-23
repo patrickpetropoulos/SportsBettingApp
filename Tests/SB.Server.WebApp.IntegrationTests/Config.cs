@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System.Net.Http.Json;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
@@ -51,6 +52,12 @@ public static class Config
         // ... Configure test services
       } );
 
+    
+      
+    //Move all this out to it's own methods, so can create different users from appSetting based on roles,
+    //and make sure they are assigned those roles before running tests
+    
+    
     //put code here to create app
     //delete all users and stuff from database
     //delete all other data from database
@@ -80,13 +87,11 @@ public static class Config
     var password = configuration["PowerUser:Password"];
 
     var client = _app.CreateClient();
-    var response = await client.GetAsync( $"/token?username={username}&password={password}" );
+    var response = await client.PostAsJsonAsync( $"/token", new {Username= username, Password = password} );
 
     var result = await response.Content.ReadAsStringAsync();
     var json = JObject.Parse( result );
 
-    
-    
     _token = JSONUtilities.GetString( json, "accessToken" );
   }
 }
