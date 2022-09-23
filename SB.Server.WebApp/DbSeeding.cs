@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace SB.Server.WebApp;
 
@@ -49,6 +50,7 @@ public class DbSeeding
           if( !currentRoles.Contains( roleName ) )
           {
             await UserManager.AddToRoleAsync( poweruser, roleName );
+            //await UserManager.AddClaimAsync( poweruser, new Claim("type", "value"));
           } 
         }
 
