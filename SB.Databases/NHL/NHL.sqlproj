@@ -63,6 +63,36 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\NHL_Teams.sql" />
+    <Build Include="dbo\Stored Procedures\Select_NHL_Game_ByExternalId.sql" />
+    <Build Include="dbo\Stored Procedures\Select_NHL_Games_BySeasonId.sql" />
+    <Build Include="dbo\Stored Procedures\Select_NHL_GoalieGames_ByGameId.sql" />
+    <Build Include="dbo\Stored Procedures\Select_NHL_GoalieGames_ByGoalieId.sql" />
+    <Build Include="dbo\Stored Procedures\Select_NHL_Goalies.sql" />
+    <Build Include="dbo\Stored Procedures\Select_NHL_Goals_ByGameId.sql" />
+    <Build Include="dbo\Stored Procedures\Select_NHL_Penalties_ByGameId.sql" />
+    <Build Include="dbo\Stored Procedures\Select_NHL_SeasonGame_BySeasonId.sql" />
+    <Build Include="dbo\Stored Procedures\Select_NHL_Seasons.sql" />
+    <Build Include="dbo\Stored Procedures\Select_NHL_SkaterGames_ByGameId.sql" />
+    <Build Include="dbo\Stored Procedures\Select_NHL_SkaterGames_BySkaterId.sql" />
+    <Build Include="dbo\Stored Procedures\Select_NHL_Skaters.sql" />
+    <Build Include="dbo\Stored Procedures\Select_NHL_Skaters_BySkaterPostition.sql" />
+    <Build Include="dbo\Stored Procedures\Select_NHL_Teams.sql" />
+    <Build Include="dbo\Stored Procedures\Upsert_NHL_Game.sql" />
+    <Build Include="dbo\Stored Procedures\Upsert_NHL_GoalieGames.sql" />
+    <Build Include="dbo\Stored Procedures\Upsert_NHL_Goalies.sql" />
+    <Build Include="dbo\Stored Procedures\Upsert_NHL_Goals.sql" />
+    <Build Include="dbo\Stored Procedures\Upsert_NHL_Penalties.sql" />
+    <Build Include="dbo\Stored Procedures\Upsert_NHL_SkaterGames.sql" />
+    <Build Include="dbo\Stored Procedures\Upsert_NHL_Skaters.sql" />
+    <Build Include="dbo\Tables\NHL_Games.sql" />
+    <Build Include="dbo\Tables\NHL_GoalieGames.sql" />
+    <Build Include="dbo\Tables\NHL_Goalies.sql" />
+    <Build Include="dbo\Tables\NHL_Goals.sql" />
+    <Build Include="dbo\Tables\NHL_HR_SC_Raw_ShiftData.sql" />
+    <Build Include="dbo\Tables\NHL_Penalties.sql" />
+    <Build Include="dbo\Tables\NHL_Seasons.sql" />
+    <Build Include="dbo\Tables\NHL_SkaterGames.sql" />
+    <Build Include="dbo\Tables\NHL_Skaters.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PublishLocations\Local-Dev-DB.publish.xml" />
