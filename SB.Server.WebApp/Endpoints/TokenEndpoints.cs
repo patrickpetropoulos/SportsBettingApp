@@ -49,7 +49,7 @@ public static class TokenEndpoints
                 var user = await userManager.Users.FirstOrDefaultAsync( c => c.Email.Equals( userEmail ) );
                 if (user == null)
                     return Results.NotFound();
-                var claims = claimsPrincipal.Claims.Select(c => c.Type +": " + c.Value).ToList();
+                var claims = claimsPrincipal.Claims.Select(c => new ClaimRecord(){Type = c.Type, Value = c.Value}).ToList();
                 var roles = await userManager.GetRolesAsync(user!);
 
                 var result = new {user, roles, claims};
@@ -86,28 +86,25 @@ public static class TokenEndpoints
       IConfiguration configuration, UserRecord userRecord )
   {
     var user = await userManager.FindByEmailAsync( userRecord.Username  ) ?? await userManager.FindByNameAsync( userRecord.Username  );
-    var roles = from ur in context.UserRoles
-                join r in context.Roles on ur.RoleId equals r.Id
-                where ur.UserId == user.Id
-                select new { ur.UserId, ur.RoleId, r.Name };
+    // var roles = from ur in context.UserRoles
+    //             join r in context.Roles on ur.RoleId equals r.Id
+    //             where ur.UserId == user.Id
+    //             select new { ur.UserId, ur.RoleId, r.Name };
+    var claimList = await userManager.GetClaimsAsync(user);
 
     //TODO fix all this, claim, clarifying it
     var expirationDate = new DateTimeOffset( DateTime.Now.AddDays( 10 ) );
 
     var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
-                new Claim("username", user.UserName),
-                new Claim("email", user.Email),
-                new Claim(JwtRegisteredClaimNames.Nbf, new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds().ToString()),
-                new Claim(JwtRegisteredClaimNames.Exp, expirationDate.ToUnixTimeSeconds().ToString())
+                new (JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new (JwtRegisteredClaimNames.UniqueName, user.UserName),
+                new (JwtRegisteredClaimNames.Email, user.Email),
+                new (JwtRegisteredClaimNames.Nbf, new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds().ToString()),
+                new (JwtRegisteredClaimNames.Exp, expirationDate.ToUnixTimeSeconds().ToString())
             };
-
-    foreach( var role in roles )
-    {
-      claims.Add( new Claim( "role", role.Name ) );
-    }
+    
+    claims.AddRange(claimList);
 
     var token = new JwtSecurityToken(
         new JwtHeader(

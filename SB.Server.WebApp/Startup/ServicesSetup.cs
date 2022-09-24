@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using static SB.Server.WebApp.AuthorizationConstants;
 
 namespace SB.Server.WebApp.Startup;
 
@@ -114,8 +115,8 @@ public static class ServicesSetup
             ValidateIssuer = false, //Can set to true if we have an issuer/audience, if we eventually have multiple
             ValidateAudience = false,
             ValidateLifetime = true,
-            //ValidIssuer = builder.Configuration.GetValue<string>("KEY"),
-            //ValidAudience = builder.Configuration.GetValue<string>("KEY"),
+            // ValidIssuer = builder.Configuration.GetValue<string>("KEY"),
+            // ValidAudience = builder.Configuration.GetValue<string>("KEY"),
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
               Encoding.UTF8.GetBytes( configuration["JWT"] ) ),
@@ -138,7 +139,8 @@ public static class ServicesSetup
         //Can have separate policies for claims, like if people had separate data in their claims
         //Like employee ID, or TITLE, or something else that we save
         //Also can have just a claim or role, not necessarily a specific claim or role
-        options.AddPolicy( "IsAdmin", policy => policy.RequireClaim( "role", "Admin" ) );
+        options.AddPolicy("IsAdmin", policy => 
+          policy.RequireClaim(Claim_AccessLevel_Type, Claim_AccessLevel_Admin));
 
         //TODO move all this out
         //This locks down all endpoints unless authenticated

@@ -1,61 +1,97 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using SB.Server.Root.Casinos;
 
 namespace SB.Server.WebApp;
 
+public class UserRecord
+{
+  public string Email { get; set; }
+  public string Username { get; set; }
+  public string Password { get; set; }
+  public List<ClaimRecord> Claims { get; set; }
+}
+
+public class ClaimRecord
+{
+  public string Type { get; set; }
+  public string Value { get; set; }
+}
 public class DbSeeding
 {
-  public static async Task CreateRoles( UserManager<ApplicationUser> UserManager,
-    RoleManager<ApplicationRole> RoleManager, IConfiguration configuration )
-  {
-    //initializing custom roles 
-    var roleNames = configuration.GetSection( "Roles" ).Get<string[]>();
-    IdentityResult roleResult;
 
-    foreach( var roleName in roleNames )
-    {
-      var roleExist = await RoleManager.RoleExistsAsync( roleName );
-      if( !roleExist )
-      {
-        //create the roles and seed them to the database: Question 1
-        var role = new ApplicationRole();
-        role.Name = roleName;
-        roleResult = await RoleManager.CreateAsync( role );
-      }
-    }    
+  public static async Task SeedDatabase(UserManager<ApplicationUser> userManager, IConfiguration configuration)
+  {
+    await CreateUsersAndClaims(userManager, configuration);
+    await SeedCasinos();
   }
-
-  public static async Task CreatePowerUser( UserManager<ApplicationUser> UserManager,
-    RoleManager<ApplicationRole> RoleManager, IConfiguration configuration )
+  public static async Task CreateUsersAndClaims( UserManager<ApplicationUser> userManager, IConfiguration configuration)
   {
-    //Here you could create a super user who will maintain the web app
-    var poweruser = new ApplicationUser
-    {
-      UserName = configuration.GetSection( "PowerUser" ).GetSection( "UserName" ).Value,
-      Email = configuration.GetSection( "PowerUser" ).GetSection( "Email" ).Value,
-    };
-    //Ensure you have these values in your appsettings.json file
-    string userPWD = configuration.GetSection( "PowerUser" ).GetSection( "Password" ).Value;
-    var _user = await UserManager.FindByEmailAsync( configuration.GetSection( "PowerUser" ).GetSection( "Email" ).Value );
+    var usersToCreate = configuration.GetSection("InitialUsers").Get<UserRecord[]>();
 
-    if( _user == null )
+    foreach (var userRecord in usersToCreate)
     {
-      var createPowerUser = await UserManager.CreateAsync( poweruser, userPWD );
-      if( createPowerUser.Succeeded )
+      //Check by email and username if user already exists, if not create it
+      var user = await userManager.FindByEmailAsync( userRecord.Email );
+      if (user != null) continue;
+      user = await userManager.FindByNameAsync(userRecord.Username);
+      if (user != null) continue;
+      user = new ApplicationUser()
       {
-        var roleNames = configuration.GetSection( "PowerUser" ).GetSection("Roles").Get<string[]>();
-        var currentRoles = await UserManager.GetRolesAsync(poweruser);
-        foreach( var roleName in roleNames )
-        {
-          if( !currentRoles.Contains( roleName ) )
-          {
-            await UserManager.AddToRoleAsync( poweruser, roleName );
-            //await UserManager.AddClaimAsync( poweruser, new Claim("type", "value"));
-          } 
-        }
-
+        Email = userRecord.Email,
+        UserName = userRecord.Username
+      };
+          
+      var result = await userManager.CreateAsync(user, userRecord.Password);
+      if (!result.Succeeded) continue;
+      //TODO need to investigate if claim can exist multiple times in db, with same userId-Type-Value pair
+      foreach (var claim in userRecord.Claims)
+      {
+        await userManager.AddClaimAsync(user, new Claim(claim.Type, claim.Value));
       }
     }
+  }
+  
+  public static async Task SeedCasinos()
+  {
+    var casinoManager = ServerSystem.Instance.Get<ICasinoManager>( "CasinoManager" );
 
+    var currentCasinos = await casinoManager.GetAllCasinos();
+    if( !currentCasinos.Any() )
+    {
+      foreach( var casino in GetListOfCasinos() )
+      {
+        await casinoManager.UpsertCasino( casino );
+      }
+    }
+    else
+    {
+      //_casinoList = currentCasinos;
+    }
+  }
+  
+  public static List<Casino> GetListOfCasinos()
+  {
+    var casinoList = new List<Casino>();
+    casinoList.Add( new Casino()
+    {
+      Name = "Borgata",
+      CountryCode = "US"
+    } );
+    casinoList.Add( new Casino()
+    {
+      Name = "Bellagio",
+      CountryCode = "US"
+    } );
+    casinoList.Add( new Casino()
+    {
+      Name = "Montreal Casino",
+      CountryCode = "CA"
+    } );
+
+    return casinoList;
   }
 }
+
+
+

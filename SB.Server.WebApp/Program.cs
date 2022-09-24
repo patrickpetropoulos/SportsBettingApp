@@ -22,9 +22,12 @@ public class Program{
     JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.Clear();
 
     builder.Services.RegisterAllServices(builder.Configuration);
-
+    
     var app = builder.Build();
 
+    //TODO eventually add in logging to ApplicationInsights
+    ServerSystem.CreateInstance( app.Services, app.Configuration );
+    
     // Configure the HTTP request pipeline.
     if( app.Environment.IsDevelopment() )
     {
@@ -44,15 +47,18 @@ public class Program{
 
     //Mapping Endpoints
     app.MapTokenEndpoints();
+    app.MapUsersEndpoints();
 
+    app.MapCasinosEndpoints();
+    
+    
     using( var scope = app.Services.CreateScope() )
     {
       scope.ServiceProvider.GetService<ApplicationDbContext>()?.Database.Migrate();
       var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-      var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-
-      DbSeeding.CreateRoles( userManager, roleManager, app.Configuration ).GetAwaiter().GetResult();
-      DbSeeding.CreatePowerUser( userManager, roleManager, app.Configuration ).GetAwaiter().GetResult();
+      DbSeeding.SeedDatabase( userManager, app.Configuration ).GetAwaiter().GetResult();
+      //DbSeeding.CreateUsersAndClaims( userManager, app.Configuration ).GetAwaiter().GetResult();
+      // DbSeeding.CreatePowerUser( userManager, roleManager, app.Configuration ).GetAwaiter().GetResult();
     }
     app.Run();
   }
