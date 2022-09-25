@@ -8,4 +8,6 @@ public interface ICasinoManager : IManager
     //country, state, etc
     Task UpsertCasino(ICasino casino);
 
+    Task<bool> DeleteCasino(int casinoId);
+
 }

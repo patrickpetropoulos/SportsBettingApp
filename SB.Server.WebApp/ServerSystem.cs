@@ -1,4 +1,5 @@
-﻿using SB.Server.Root.Casinos;
+﻿using SB.Server.Common.Managers;
+using SB.Server.Root.Casinos;
 
 namespace SB.Server.WebApp;
 
@@ -25,14 +26,13 @@ public class ServerSystem
 
     //In appsettings, its full namespace of file + filename, then comma, then full name of project it is in
     //Need to add them as reference, OBVIOUSLY
-    var temp = configuration["Casino:Manager"];
     var config = Type.GetType( configuration["Casino:Manager"] );
     if( config != null )
     {
       var casinoManager = ActivatorUtilities.CreateInstance( services, config, new object[] { configuration } ) as ICasinoManager;
       if( casinoManager != null )
       {
-        _services.Add( "CasinoManager", casinoManager );
+        _services.Add( ManagerNames.CasinoManager, casinoManager );
       }
     }
     // config = Type.GetType( configuration["CasinoGame:Manager"] );

@@ -46,18 +46,41 @@ public class SqlCasinoManager : Manager, ICasinoManager
     }
     else
     {
-      //Code for updating a casino
+      var result = await DatabaseUtilities.ExecuteAsync<bool>( _connectionString,
+        async ( c ) => await UpdateCasino( c, casino ) );
+    }
+  }
+  
+  public async Task<bool> DeleteCasino( int casinoId )
+  {
+    if( casinoId > 0 )
+    {
+      //what to do with int??? move this logic up, have an insert call???
+      return await DatabaseUtilities.ExecuteAsync<bool>( _connectionString,
+        async ( c ) => await DeleteCasino( c, casinoId ) );
+    }
+    else
+    {
+      throw new Exception();
     }
   }
 
-  //Database
+  //Access Helper Functions
+  public void ReadCasino( ICasino casino, SqlDataReader sqlDataReader )
+  {
+    casino.Id = DatabaseUtilities.GetInt32( sqlDataReader, "Id", 0 ) ?? 0;
+    casino.Name = DatabaseUtilities.GetString( sqlDataReader, "Name", 1 );
+    casino.CountryCode = DatabaseUtilities.GetString( sqlDataReader, "CountryCode", 2 );
+  }
+  
+  //Database Access
 
   public async Task<List<ICasino>> SelectAllCasinos( SqlConnection sqlConnection )
   {
     var casinos = new List<ICasino>();
     try
     {
-      using( var sqlCmd = new SqlCommand( "SelectAllCasinos", sqlConnection )
+      using( var sqlCmd = new SqlCommand( StoredProcedures.Casino_SelectAllCasinos, sqlConnection )
       {
         CommandType = CommandType.StoredProcedure
       } )
@@ -76,7 +99,7 @@ public class SqlCasinoManager : Manager, ICasinoManager
     }
     catch( Exception ex )
     {
-      _log.LogError( ex, "SelectAllCasinos failed" );
+      _log.LogError( ex, StoredProcedures.Casino_SelectAllCasinos );
       throw;
     }
   }
@@ -86,7 +109,7 @@ public class SqlCasinoManager : Manager, ICasinoManager
     try
     {
       //TODO move these out to file
-      using( var sqlCmd = new SqlCommand( "InsertCasino", sqlConnection )
+      using( var sqlCmd = new SqlCommand( StoredProcedures.Casino_InsertCasino, sqlConnection )
       {
         CommandType = CommandType.StoredProcedure
       } )
@@ -104,18 +127,63 @@ public class SqlCasinoManager : Manager, ICasinoManager
     catch( SqlException e )
     {
       //TODO update name
-      _log.LogError( e, "InsertCasino failed" );
+      _log.LogError( e, StoredProcedures.Casino_InsertCasino );
       throw;
     }
   }
-  //Helper Functions
-  public void ReadCasino( ICasino casino, SqlDataReader sqlDataReader )
+  
+  public async Task<bool> UpdateCasino( SqlConnection sqlConnection, ICasino casino )
   {
-    casino.Id = DatabaseUtilities.GetInt32( sqlDataReader, "Id", 0 ) ?? 0;
-    casino.Name = DatabaseUtilities.GetString( sqlDataReader, "Name", 1 );
-    casino.CountryCode = DatabaseUtilities.GetString( sqlDataReader, "CountryCode", 2 );
+    try
+    {
+      //TODO move these out to file
+      using( var sqlCmd = new SqlCommand( StoredProcedures.Casino_UpdateCasino, sqlConnection )
+            {
+              CommandType = CommandType.StoredProcedure
+            } )
+      {
+        sqlCmd.Parameters.Add( new SqlParameter( "Id ", casino.Id ) );
+        sqlCmd.Parameters.Add( new SqlParameter( "Name ", casino.Name ) );
+        sqlCmd.Parameters.Add( new SqlParameter( "CountryCode ", casino.CountryCode ) );
 
+
+        await sqlCmd.ExecuteNonQueryAsync();
+        return true;
+      }
+    }
+    catch( SqlException e )
+    {
+      //TODO update name
+      _log.LogError( e, StoredProcedures.Casino_UpdateCasino );
+      throw;
+    }
   }
+  
+  public async Task<bool> DeleteCasino( SqlConnection sqlConnection, int casinoId )
+  {
+    try
+    {
+      //TODO move these out to file
+      using( var sqlCmd = new SqlCommand( StoredProcedures.Casino_DeleteCasino, sqlConnection )
+            {
+              CommandType = CommandType.StoredProcedure
+            } )
+      {
+        sqlCmd.Parameters.Add( new SqlParameter( "Id ", casinoId ) );
+
+
+        await sqlCmd.ExecuteNonQueryAsync();
+        return true;
+      }
+    }
+    catch( SqlException e )
+    {
+      //TODO update name
+      _log.LogError( e, StoredProcedures.Casino_DeleteCasino );
+      throw;
+    }
+  }
+
 
 
 }
