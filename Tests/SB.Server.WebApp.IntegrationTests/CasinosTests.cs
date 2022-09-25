@@ -8,6 +8,15 @@ namespace SB.Server.WebApp.IntegrationTests;
 
 public class CasinosTests
 {
+    public static Casino CreateTestCasino()
+    {
+        return new Casino()
+        {
+            Id = Guid.NewGuid(),
+            CountryCode = "CA",
+            Name = "DELETE ME, IM TEST DATA"
+        };
+    }
     public static async Task<List<Casino>> GetAllCasinos(HttpClient client)
     {
         var response = await client.GetAsync( "/api/casinos/" );
@@ -52,7 +61,7 @@ public class CasinosTests
         return JsonConvert.DeserializeObject<Casino>(((JObject?) json?["casino"]).ToString());
     }
     
-    public static async Task DeleteCasino(HttpClient client, int id)
+    public static async Task DeleteCasino(HttpClient client, Guid id)
     {
         var deleteResponse = await client.DeleteAsync($"/api/casinos/{id}");
         
@@ -74,7 +83,7 @@ public class CasinosTests
 
         var casinoList = await GetAllCasinos(client);
 
-        var expectedList = DbSeeding.GetListOfCasinos();
+        var expectedList = DbSeeding.GetSeedCasinos();
 
         //If any of the known seed data casinos do not appear in list, Fail
         foreach (var casino in expectedList)
@@ -90,12 +99,7 @@ public class CasinosTests
     public async Task CreateCasino_ThenDelete_EnsureNotInNewListOfAllCasinos()
     {
         var client = await Config.GetAuthorizedClientWithAdminAccessLevel();
-        var casinoToCreate = new Casino()
-        {
-            Id = 0,
-            CountryCode = "CA",
-            Name = "DELETE ME, IM TEST DATA"
-        };
+        var casinoToCreate = CreateTestCasino();
 
         var createdCasino = await CreateCasino(client, casinoToCreate);
 
@@ -113,12 +117,7 @@ public class CasinosTests
     public async Task CreateCasino_ThenUpdateAndValidateChanges_ThenDelete_EnsureNotInNewListofAllCasinos()
     {
         var client = await Config.GetAuthorizedClientWithAdminAccessLevel();
-        var casinoToCreate = new Casino()
-        {
-            Id = 0,
-            CountryCode = "CA",
-            Name = "DELETE ME, IM TEST DATA"
-        };
+        var casinoToCreate = CreateTestCasino();
 
         var createdCasino = await CreateCasino(client, casinoToCreate);
         //Make sure created casino is correct

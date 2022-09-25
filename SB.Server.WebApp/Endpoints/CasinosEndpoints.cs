@@ -62,7 +62,7 @@ public static class CasinosEndpoints
         app.MapPut("/api/casinos/{id}",
                 async (ClaimsPrincipal claimsPrincipal,
                     UserManager<ApplicationUser> userManager,
-                    int id,
+                    Guid id,
                     [FromBody] Casino casino) =>
                 {
                     //var casino = JsonConvert.DeserializeObject<Casino>(jObject?["casino"].ToString());
@@ -89,7 +89,7 @@ public static class CasinosEndpoints
         app.MapDelete("/api/casinos/{id}",
                 async (ClaimsPrincipal claimsPrincipal,
                     UserManager<ApplicationUser> userManager,
-                    int id) =>
+                    Guid id) =>
                 {
                     var casinoManager = ServerSystem.Instance.Get<ICasinoManager>( ManagerNames.CasinoManager );
 

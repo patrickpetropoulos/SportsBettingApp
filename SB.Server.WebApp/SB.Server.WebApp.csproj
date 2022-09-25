@@ -37,4 +37,9 @@
     <ProjectReference Include="..\SB.Server.Root.Casinos\SB.Server.Root.Casinos.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Remove="SeedData\Casino_Seed_Data.json" />
+    <EmbeddedResource Include="SeedData\Casino_Seed_Data.json" />
+  </ItemGroup>
+
 </Project>

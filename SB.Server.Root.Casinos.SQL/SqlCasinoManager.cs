@@ -35,40 +35,23 @@ public class SqlCasinoManager : Manager, ICasinoManager
               async ( c ) => await SelectAllCasinos( c ) );
   }
 
-  public async Task UpsertCasino( ICasino casino )
+  public async Task<bool> UpsertCasino( ICasino casino )
   {
-    if( casino.Id <= 0 )
-    {
-      //what to do with int??? move this logic up, have an insert call???
-      var result = await DatabaseUtilities.ExecuteAsync<int>( _connectionString,
-              async ( c ) => await InsertCasino( c, casino ) );
-      casino.Id = result;
-    }
-    else
-    {
-      var result = await DatabaseUtilities.ExecuteAsync<bool>( _connectionString,
-        async ( c ) => await UpdateCasino( c, casino ) );
-    }
+      return await DatabaseUtilities.ExecuteAsync<bool>( _connectionString,
+        async ( c ) => await UpsertCasino( c, casino ) );
   }
   
-  public async Task<bool> DeleteCasino( int casinoId )
+  public async Task<bool> DeleteCasino( Guid casinoId )
   {
-    if( casinoId > 0 )
-    {
       //what to do with int??? move this logic up, have an insert call???
       return await DatabaseUtilities.ExecuteAsync<bool>( _connectionString,
         async ( c ) => await DeleteCasino( c, casinoId ) );
-    }
-    else
-    {
-      throw new Exception();
-    }
   }
 
   //Access Helper Functions
   public void ReadCasino( ICasino casino, SqlDataReader sqlDataReader )
   {
-    casino.Id = DatabaseUtilities.GetInt32( sqlDataReader, "Id", 0 ) ?? 0;
+    casino.Id = DatabaseUtilities.GetGuid( sqlDataReader, "Id", 0 ) ?? Guid.Empty;
     casino.Name = DatabaseUtilities.GetString( sqlDataReader, "Name", 1 );
     casino.CountryCode = DatabaseUtilities.GetString( sqlDataReader, "CountryCode", 2 );
   }
@@ -104,40 +87,12 @@ public class SqlCasinoManager : Manager, ICasinoManager
     }
   }
 
-  public async Task<int> InsertCasino( SqlConnection sqlConnection, ICasino casino )
+  public async Task<bool> UpsertCasino( SqlConnection sqlConnection, ICasino casino )
   {
     try
     {
       //TODO move these out to file
-      using( var sqlCmd = new SqlCommand( StoredProcedures.Casino_InsertCasino, sqlConnection )
-      {
-        CommandType = CommandType.StoredProcedure
-      } )
-      {
-        sqlCmd.Parameters.Add( new SqlParameter( "Name ", casino.Name ) );
-        sqlCmd.Parameters.Add( new SqlParameter( "CountryCode ", casino.CountryCode ) );
-
-        sqlCmd.Parameters.Add( "@id", SqlDbType.Int ).Direction = ParameterDirection.Output;
-
-        await sqlCmd.ExecuteNonQueryAsync();
-        string id = sqlCmd.Parameters["@id"].Value.ToString();
-        return int.Parse( id );
-      }
-    }
-    catch( SqlException e )
-    {
-      //TODO update name
-      _log.LogError( e, StoredProcedures.Casino_InsertCasino );
-      throw;
-    }
-  }
-  
-  public async Task<bool> UpdateCasino( SqlConnection sqlConnection, ICasino casino )
-  {
-    try
-    {
-      //TODO move these out to file
-      using( var sqlCmd = new SqlCommand( StoredProcedures.Casino_UpdateCasino, sqlConnection )
+      using( var sqlCmd = new SqlCommand( StoredProcedures.Casino_UpsertCasino, sqlConnection )
             {
               CommandType = CommandType.StoredProcedure
             } )
@@ -154,12 +109,12 @@ public class SqlCasinoManager : Manager, ICasinoManager
     catch( SqlException e )
     {
       //TODO update name
-      _log.LogError( e, StoredProcedures.Casino_UpdateCasino );
+      _log.LogError( e, StoredProcedures.Casino_UpsertCasino );
       throw;
     }
   }
   
-  public async Task<bool> DeleteCasino( SqlConnection sqlConnection, int casinoId )
+  public async Task<bool> DeleteCasino( SqlConnection sqlConnection, Guid casinoId )
   {
     try
     {

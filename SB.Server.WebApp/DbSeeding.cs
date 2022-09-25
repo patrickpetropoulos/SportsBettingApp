@@ -1,5 +1,9 @@
-﻿using System.Security.Claims;
+﻿using System.Reflection;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using SB.Server.Common.Managers;
 using SB.Server.Root.Casinos;
 
 namespace SB.Server.WebApp;
@@ -31,35 +35,55 @@ public class DbSeeding
 
     foreach (var userRecord in usersToCreate)
     {
-      //Check by email and username if user already exists, if not create it
-      var user = await userManager.FindByEmailAsync( userRecord.Email );
-      if (user != null) continue;
-      user = await userManager.FindByNameAsync(userRecord.Username);
-      if (user != null) continue;
-      user = new ApplicationUser()
+      var user = await CreateUser(userManager, userRecord);
+      if (user == null)
       {
-        Email = userRecord.Email,
-        UserName = userRecord.Username
-      };
-          
-      var result = await userManager.CreateAsync(user, userRecord.Password);
-      if (!result.Succeeded) continue;
+        //TODO log that couldn't be created
+        //TODO move this to proper create user task
+        continue;
+      }
       //TODO need to investigate if claim can exist multiple times in db, with same userId-Type-Value pair
+      var currentClaims = await userManager.GetClaimsAsync(user);
+      
       foreach (var claim in userRecord.Claims)
       {
-        await userManager.AddClaimAsync(user, new Claim(claim.Type, claim.Value));
+        var currentClaim = currentClaims.FirstOrDefault(c => c.Type.Equals(claim.Type));
+        if (currentClaim == null)
+        {
+          await userManager.AddClaimAsync(user, new Claim(claim.Type, claim.Value));
+        }
+        else
+        {
+          await userManager.ReplaceClaimAsync(user, currentClaim, new Claim(claim.Type, claim.Value));
+        }
       }
     }
+  }
+
+  public static async Task<ApplicationUser?> CreateUser(UserManager<ApplicationUser> userManager, UserRecord userRecord)
+  {
+    var user = await userManager.FindByEmailAsync( userRecord.Email );
+    if (user != null) return user;
+    user = await userManager.FindByNameAsync(userRecord.Username);
+    if (user != null) return user;
+    user = new ApplicationUser()
+    {
+      Email = userRecord.Email,
+      UserName = userRecord.Username
+    };
+          
+    var result = await userManager.CreateAsync(user, userRecord.Password);
+    return result.Succeeded ? user : null;
   }
   
   public static async Task SeedCasinos()
   {
-    var casinoManager = ServerSystem.Instance.Get<ICasinoManager>( "CasinoManager" );
+    var casinoManager = ServerSystem.Instance.Get<ICasinoManager>( ManagerNames.CasinoManager);
 
     var currentCasinos = await casinoManager.GetAllCasinos();
     if( !currentCasinos.Any() )
     {
-      foreach( var casino in GetListOfCasinos() )
+      foreach( var casino in GetSeedCasinos() )
       {
         await casinoManager.UpsertCasino( casino );
       }
@@ -70,26 +94,17 @@ public class DbSeeding
     }
   }
   
-  public static List<Casino> GetListOfCasinos()
+  public static List<Casino> GetSeedCasinos()
   {
-    var casinoList = new List<Casino>();
-    casinoList.Add( new Casino()
+    var assembly = Assembly.GetExecutingAssembly();
+    using( var stream = assembly.GetManifestResourceStream( "SB.Server.WebApp.SeedData.Casino_Seed_Data.json" ) )
+    using (var reader = new StreamReader(stream))
     {
-      Name = "Borgata",
-      CountryCode = "US"
-    } );
-    casinoList.Add( new Casino()
-    {
-      Name = "Bellagio",
-      CountryCode = "US"
-    } );
-    casinoList.Add( new Casino()
-    {
-      Name = "Montreal Casino",
-      CountryCode = "CA"
-    } );
+      string text = reader.ReadToEnd();
+      var json = JArray.Parse(text);
 
-    return casinoList;
+      return JsonConvert.DeserializeObject<List<Casino>>((json).ToString());
+    }
   }
 }
 

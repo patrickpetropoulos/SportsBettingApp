@@ -57,8 +57,6 @@ public class Program{
       scope.ServiceProvider.GetService<ApplicationDbContext>()?.Database.Migrate();
       var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
       DbSeeding.SeedDatabase( userManager, app.Configuration ).GetAwaiter().GetResult();
-      //DbSeeding.CreateUsersAndClaims( userManager, app.Configuration ).GetAwaiter().GetResult();
-      // DbSeeding.CreatePowerUser( userManager, roleManager, app.Configuration ).GetAwaiter().GetResult();
     }
     app.Run();
   }

@@ -5,7 +5,7 @@ namespace SB.Server.Root.Casinos;
 
 public class Casino : ICasino
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public string Name { get; set; }
     public string CountryCode { get; set; }
     
@@ -13,7 +13,7 @@ public class Casino : ICasino
 
     public void FromJson( JObject json )
     {
-        Id = JSONUtilities.GetInt( json, "id" );
+        Id = JSONUtilities.GetGuid( json, "id" );
         Name = JSONUtilities.GetString( json, "name" );
         CountryCode = JSONUtilities.GetString( json, "countryCode" );
     }

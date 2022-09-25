@@ -11,11 +11,6 @@
       <ProjectReference Include="..\SB.Server.Common\SB.Server.Common.csproj" />
       <ProjectReference Include="..\SB.Server.Root.Casinos\SB.Server.Root.Casinos.csproj" />
       <ProjectReference Include="..\SB.Server.Root\SB.Server.Root.csproj" />
-      <ProjectReference Include="..\solutions\SB.Server.Root.Casinos\SB.Server.Root.Casinos.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Managers" />
     </ItemGroup>
 
 </Project>
