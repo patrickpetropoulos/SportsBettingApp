@@ -26,7 +26,7 @@ public class ServerSystem
 
     //In appsettings, its full namespace of file + filename, then comma, then full name of project it is in
     //Need to add them as reference, OBVIOUSLY
-    var config = Type.GetType( configuration["Casino:Manager"] );
+    var config = Type.GetType( configuration.GetValue<string>("Casino:Manager"));
     if( config != null )
     {
       var casinoManager = ActivatorUtilities.CreateInstance( services, config, new object[] { configuration } ) as ICasinoManager;

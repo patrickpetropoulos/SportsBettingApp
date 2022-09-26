@@ -16,9 +16,8 @@ public class ApplicationUser : IdentityUser<Guid>
 {
   public int SuperPrivateField { get; set; }
 }
-
+//TODO remove ApplicationRole
 public class ApplicationRole : IdentityRole<Guid>
 {
   public int Priority { get; set; }
-
 }

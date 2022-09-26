@@ -112,14 +112,14 @@ public static class ServicesSetup
         {
           options.TokenValidationParameters = new TokenValidationParameters
           {
-            ValidateIssuer = false, //Can set to true if we have an issuer/audience, if we eventually have multiple
-            ValidateAudience = false,
+            ValidateIssuer = true, //Can set to true if we have an issuer/audience, if we eventually have multiple
+            ValidateAudience = true,
             ValidateLifetime = true,
-            // ValidIssuer = builder.Configuration.GetValue<string>("KEY"),
-            // ValidAudience = builder.Configuration.GetValue<string>("KEY"),
+            ValidIssuer = configuration.GetValue<string>("JWT:issuer"),
+            ValidAudience = configuration.GetValue<string>("JWT:audience"),
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
-              Encoding.UTF8.GetBytes( configuration["JWT"] ) ),
+              Encoding.UTF8.GetBytes( configuration.GetValue<string>("JWT:signingKey") ) ),
             ClockSkew = TimeSpan.Zero
           };
         } );
@@ -139,7 +139,7 @@ public static class ServicesSetup
         //Can have separate policies for claims, like if people had separate data in their claims
         //Like employee ID, or TITLE, or something else that we save
         //Also can have just a claim or role, not necessarily a specific claim or role
-        options.AddPolicy("IsAdmin", policy => 
+        options.AddPolicy(Claim_Policy_IsAdmin, policy => 
           policy.RequireClaim(Claim_AccessLevel_Type, Claim_AccessLevel_Admin));
 
         //TODO move all this out

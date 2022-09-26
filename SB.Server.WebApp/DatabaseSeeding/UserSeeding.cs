@@ -21,15 +21,22 @@ public class ClaimRecord
   public string Type { get; set; }
   public string Value { get; set; }
 }
-public class DbSeeding
+public class UserSeeding
 {
+  private readonly UserManager<ApplicationUser> _userManager;
+  private readonly IConfiguration _configuration;
 
-  public static async Task SeedDatabase(UserManager<ApplicationUser> userManager, IConfiguration configuration)
+  public UserSeeding(UserManager<ApplicationUser> userManager, IConfiguration configuration)
   {
-    await CreateUsersAndClaims(userManager, configuration);
-    await SeedCasinos();
+    _userManager = userManager;
+    _configuration = configuration;
   }
-  public static async Task CreateUsersAndClaims( UserManager<ApplicationUser> userManager, IConfiguration configuration)
+  public async Task SeedDatabase()
+  {
+    await CreateUsersAndClaims(_userManager, _configuration);
+  }
+
+  private async Task CreateUsersAndClaims( UserManager<ApplicationUser> userManager, IConfiguration configuration)
   {
     var usersToCreate = configuration.GetSection("InitialUsers").Get<UserRecord[]>();
 
@@ -60,7 +67,7 @@ public class DbSeeding
     }
   }
 
-  public static async Task<ApplicationUser?> CreateUser(UserManager<ApplicationUser> userManager, UserRecord userRecord)
+  private async Task<ApplicationUser?> CreateUser(UserManager<ApplicationUser> userManager, UserRecord userRecord)
   {
     var user = await userManager.FindByEmailAsync( userRecord.Email );
     if (user != null) return user;
@@ -74,37 +81,6 @@ public class DbSeeding
           
     var result = await userManager.CreateAsync(user, userRecord.Password);
     return result.Succeeded ? user : null;
-  }
-  
-  public static async Task SeedCasinos()
-  {
-    var casinoManager = ServerSystem.Instance.Get<ICasinoManager>( ManagerNames.CasinoManager);
-
-    var currentCasinos = await casinoManager.GetAllCasinos();
-    if( !currentCasinos.Any() )
-    {
-      foreach( var casino in GetSeedCasinos() )
-      {
-        await casinoManager.UpsertCasino( casino );
-      }
-    }
-    else
-    {
-      //_casinoList = currentCasinos;
-    }
-  }
-  
-  public static List<Casino> GetSeedCasinos()
-  {
-    var assembly = Assembly.GetExecutingAssembly();
-    using( var stream = assembly.GetManifestResourceStream( "SB.Server.WebApp.SeedData.Casino_Seed_Data.json" ) )
-    using (var reader = new StreamReader(stream))
-    {
-      string text = reader.ReadToEnd();
-      var json = JArray.Parse(text);
-
-      return JsonConvert.DeserializeObject<List<Casino>>((json).ToString());
-    }
   }
 }
 

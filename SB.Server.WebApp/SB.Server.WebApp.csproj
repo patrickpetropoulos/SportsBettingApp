@@ -39,7 +39,6 @@
 
   <ItemGroup>
     <Content Remove="SeedData\Casino_Seed_Data.json" />
-    <EmbeddedResource Include="SeedData\Casino_Seed_Data.json" />
   </ItemGroup>
 
 </Project>

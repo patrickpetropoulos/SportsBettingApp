@@ -83,7 +83,7 @@ public class CasinosTests
 
         var casinoList = await GetAllCasinos(client);
 
-        var expectedList = DbSeeding.GetSeedCasinos();
+        var expectedList = new DataSeeding().GetSeedCasinos();
 
         //If any of the known seed data casinos do not appear in list, Fail
         foreach (var casino in expectedList)

@@ -1,11 +1,7 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Microsoft.AspNetCore.Mvc;
 using SB.Server.Common.Managers;
 using SB.Server.Root.Casinos;
+using static SB.Server.WebApp.AuthorizationConstants;
 
 namespace SB.Server.WebApp.Endpoints;
 
@@ -22,84 +18,74 @@ public static class CasinosEndpoints
         return app;
     }
 
-    public static WebApplication MapGetAllCasinos(this WebApplication app)
+    private static void MapGetAllCasinos(this WebApplication app)
     {
         //Better path??
         app.MapGet("/api/casinos/",
-            async (ClaimsPrincipal claimsPrincipal,
-                UserManager<ApplicationUser> userManager) =>
+            async () =>
             {
-                var casinoManager = ServerSystem.Instance.Get<ICasinoManager>( ManagerNames.CasinoManager );
-
+                var casinoManager = ServerSystem.Instance?.Get<ICasinoManager>( ManagerNames.CasinoManager );
+                if (casinoManager == null)
+                    return Results.BadRequest();
                 var casinos = await casinoManager.GetAllCasinos();
     
                 return Results.Ok(new {casinos});
             });
-        // .RequireAuthorization("IsAdmin");
-        return app;
     }
-    
-    public static WebApplication MapInsertCasino(this WebApplication app)
+
+    private static void MapInsertCasino(this WebApplication app)
     {
         app.MapPost("/api/casinos/",
-            async (ClaimsPrincipal claimsPrincipal,
-                UserManager<ApplicationUser> userManager,
-                [FromBody] Casino casino) =>
+            async ([FromBody] Casino casino) =>
             {
-                //var casino = JsonConvert.DeserializeObject<Casino>(jObject?["casino"].ToString());
-                
-                var casinoManager = ServerSystem.Instance.Get<ICasinoManager>( ManagerNames.CasinoManager );
-
+                var casinoManager = ServerSystem.Instance?.Get<ICasinoManager>( ManagerNames.CasinoManager );
+                if (casinoManager == null)
+                    return Results.BadRequest();
                 await casinoManager.UpsertCasino(casino);
     
                 return Results.Ok(new {casino});
             })
-        .RequireAuthorization("IsAdmin");
-        return app;
+        .RequireAuthorization(Claim_Policy_IsAdmin);
     }
-    public static WebApplication MapUpdateCasino(this WebApplication app)
+
+    private static void MapUpdateCasino(this WebApplication app)
     {
         app.MapPut("/api/casinos/{id}",
-                async (ClaimsPrincipal claimsPrincipal,
-                    UserManager<ApplicationUser> userManager,
-                    Guid id,
+                async (Guid id,
                     [FromBody] Casino casino) =>
                 {
-                    //var casino = JsonConvert.DeserializeObject<Casino>(jObject?["casino"].ToString());
-
                     if (casino.Id != id)
                     {
                         //TODO put these errors somewhere and ensure we get them
                         return Results.BadRequest("Id in url doesn't match Id in object");
                     }
                     
-                    var casinoManager = ServerSystem.Instance.Get<ICasinoManager>( ManagerNames.CasinoManager );
+                    var casinoManager = ServerSystem.Instance?.Get<ICasinoManager>( ManagerNames.CasinoManager );
+                    if (casinoManager == null)
+                        return Results.BadRequest();
 
                     await casinoManager.UpsertCasino(casino);
     
                     return Results.Ok(new {casino});
                 })
-            .RequireAuthorization("IsAdmin");
-        return app;
+            .RequireAuthorization(Claim_Policy_IsAdmin);
     }
-    
-    public static WebApplication MapDeleteCasino(this WebApplication app)
+
+    private static void MapDeleteCasino(this WebApplication app)
     {
         //Better path??
         app.MapDelete("/api/casinos/{id}",
-                async (ClaimsPrincipal claimsPrincipal,
-                    UserManager<ApplicationUser> userManager,
-                    Guid id) =>
+                async (Guid id) =>
                 {
-                    var casinoManager = ServerSystem.Instance.Get<ICasinoManager>( ManagerNames.CasinoManager );
-
+                    var casinoManager = ServerSystem.Instance?.Get<ICasinoManager>( ManagerNames.CasinoManager );
+                    if (casinoManager == null)
+                        return Results.BadRequest();
                     var successful = await casinoManager.DeleteCasino(id);
                     
                     return successful ? 
                         Results.Ok("Casino with id " + id + "deleted") : 
                         Results.BadRequest("Something went wrong");
                 })
-            .RequireAuthorization("IsAdmin");
-        return app;
+            .RequireAuthorization(Claim_Policy_IsAdmin);
     }
 }
