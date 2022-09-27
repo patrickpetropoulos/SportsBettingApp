@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[DeleteCasino]
-	@id int
+	@Id UNIQUEIDENTIFIER
 AS
-	DELETE FROM [dbo].[Casinos] where id = @id
+	DELETE FROM [dbo].[Casinos] where Id = @Id
 RETURN 0

@@ -63,14 +63,14 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\Casinos.sql" />
-    <Build Include="dbo\Stored Procedures\InsertCasino.sql" />
-    <Build Include="dbo\Stored Procedures\InsertCasinoGame.sql" />
+    <Build Include="dbo\Stored Procedures\UpsertCasinoGame.sql" />
     <Build Include="dbo\Stored Procedures\SelectAllCasinoGames.sql" />
     <Build Include="dbo\Stored Procedures\SelectAllCasinos.sql" />
     <Build Include="dbo\Tables\CasinoGames.sql" />
     <Build Include="dbo\Tables\GamblingSession.sql" />
     <Build Include="dbo\Stored Procedures\DeleteCasino.sql" />
-    <Build Include="dbo\Stored Procedures\UpdateCasino.sql" />
+    <Build Include="dbo\Stored Procedures\UpsertCasino.sql" />
+    <Build Include="dbo\Stored Procedures\DeleteCasinoGame.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PublishLocations\Local-Dev-DB.publish.xml" />

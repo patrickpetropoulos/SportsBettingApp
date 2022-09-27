@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[CasinoGames]
 (
-	[Id] INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+	[Id] UNIQUEIDENTIFIER PRIMARY KEY,
 	[Name] varchar(50) NOT NULL,
 	[HasSubType] bit DEFAULT 0 
 )

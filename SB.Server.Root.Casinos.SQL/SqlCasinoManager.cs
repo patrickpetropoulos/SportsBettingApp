@@ -92,24 +92,22 @@ public class SqlCasinoManager : Manager, ICasinoManager
     try
     {
       //TODO move these out to file
-      using( var sqlCmd = new SqlCommand( StoredProcedures.Casino_UpsertCasino, sqlConnection )
-            {
-              CommandType = CommandType.StoredProcedure
-            } )
+      await using var sqlCmd = new SqlCommand( StoredProcedures.Casino_UpsertCasino, sqlConnection )
       {
-        sqlCmd.Parameters.Add( new SqlParameter( "Id ", casino.Id ) );
-        sqlCmd.Parameters.Add( new SqlParameter( "Name ", casino.Name ) );
-        sqlCmd.Parameters.Add( new SqlParameter( "CountryCode ", casino.CountryCode ) );
+        CommandType = CommandType.StoredProcedure
+      };
+      sqlCmd.Parameters.Add( new SqlParameter( "Id ", casino.Id ) );
+      sqlCmd.Parameters.Add( new SqlParameter( "Name ", casino.Name ) );
+      sqlCmd.Parameters.Add( new SqlParameter( "CountryCode ", casino.CountryCode ) );
 
 
-        await sqlCmd.ExecuteNonQueryAsync();
-        return true;
-      }
+      await sqlCmd.ExecuteNonQueryAsync();
+      return true;
     }
     catch( SqlException e )
     {
       //TODO update name
-      _log.LogError( e, StoredProcedures.Casino_UpsertCasino );
+      //_log.LogError( e, StoredProcedures.Casino_UpsertCasino );
       throw;
     }
   }

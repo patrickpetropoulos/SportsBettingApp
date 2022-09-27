@@ -17,7 +17,7 @@ public class DataSeeding
         if (stream == null) return;
         using var reader = new StreamReader(stream);
         var text = reader.ReadToEnd();
-        _seedData =  JObject.Parse(reader.ReadToEnd());
+        _seedData =  JObject.Parse(text);
     }
 
     public async Task SeedDatabase()

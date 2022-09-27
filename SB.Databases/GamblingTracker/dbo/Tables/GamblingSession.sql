@@ -2,8 +2,8 @@
 (
 	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
 	[UserId] UNIQUEIDENTIFIER,
-	[CasinoId] INT,
-	[CasinoGameId] INT,
+	[CasinoId] UNIQUEIDENTIFIER,
+	[CasinoGameId] UNIQUEIDENTIFIER,
 	[GameSubTypeId] INT,
 	[StartAmount] NUMERIC(18, 2),
 	[EndAmount] NUMERIC(18, 2)
