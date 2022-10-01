@@ -11,14 +11,13 @@ public static class CasinosEndpoints
     {
         //TODO how to manage swagger to have them separated out better
         
-        app.MapGetAllCasinos();
-        app.MapInsertCasino();
-        app.MapUpdateCasino();
-        app.MapDeleteCasino();
-        return app;
+        return app.MapGetAllCasinos()
+            .MapInsertCasino()
+            .MapUpdateCasino()
+            .MapDeleteCasino();
     }
 
-    private static void MapGetAllCasinos(this WebApplication app)
+    private static WebApplication MapGetAllCasinos(this WebApplication app)
     {
         //Better path??
         app.MapGet("/api/casinos/",
@@ -31,9 +30,10 @@ public static class CasinosEndpoints
     
                 return Results.Ok(new {casinos});
             });
+        return app;
     }
 
-    private static void MapInsertCasino(this WebApplication app)
+    private static WebApplication MapInsertCasino(this WebApplication app)
     {
         app.MapPost("/api/casinos/",
             async ([FromBody] Casino casino) =>
@@ -46,9 +46,10 @@ public static class CasinosEndpoints
                 return Results.Ok(new {casino});
             })
         .RequireAuthorization(Claim_Policy_IsAdmin);
+        return app;
     }
 
-    private static void MapUpdateCasino(this WebApplication app)
+    private static WebApplication MapUpdateCasino(this WebApplication app)
     {
         app.MapPut("/api/casinos/{id}",
                 async (Guid id,
@@ -69,9 +70,10 @@ public static class CasinosEndpoints
                     return Results.Ok(new {casino});
                 })
             .RequireAuthorization(Claim_Policy_IsAdmin);
+        return app;
     }
 
-    private static void MapDeleteCasino(this WebApplication app)
+    private static WebApplication MapDeleteCasino(this WebApplication app)
     {
         //Better path??
         app.MapDelete("/api/casinos/{id}",
@@ -87,5 +89,6 @@ public static class CasinosEndpoints
                         Results.BadRequest("Something went wrong");
                 })
             .RequireAuthorization(Claim_Policy_IsAdmin);
+        return app;
     }
 }

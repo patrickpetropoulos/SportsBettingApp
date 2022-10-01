@@ -13,9 +13,8 @@ public static class StoredProcedures
     #region CasinoGames
 
     public const string CasinoGames_SelectAllCasinoGames = "SelectAllCasinoGames";
-    public const string CasinoGames_UpsertCasinoGames = "UpsertCasinoGames";
-    public const string CasinoGames_DeleteCasinoGame = "SelectAllCasinoGames";
-    
+    public const string CasinoGames_UpsertCasinoGames = "UpsertCasinoGame";
+    public const string CasinoGames_DeleteCasinoGame = "DeleteCasinoGame";
     
     #endregion
 

@@ -2,6 +2,7 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SB.Server.Common.Managers;
+using SB.Server.Root.CasinoGames;
 using SB.Server.Root.Casinos;
 
 namespace SB.Server.WebApp;
@@ -23,6 +24,7 @@ public class DataSeeding
     public async Task SeedDatabase()
     {
         await SeedCasinos();
+        await SeedCasinoGames();
     }
     public List<Casino> GetSeedCasinos()
     {
@@ -50,6 +52,36 @@ public class DataSeeding
             foreach( var casino in GetSeedCasinos())
             {
                 await casinoManager.UpsertCasino( casino );
+            }
+        }
+    }
+    
+    public List<CasinoGame> GetSeedCasinoGames()
+    {
+        var casinoGames = new List<CasinoGame>();
+        try
+        {
+            casinoGames = JsonConvert.DeserializeObject<List<CasinoGame>>(((JArray?) _seedData?["casinoGames"]).ToString());
+        }
+        catch (Exception ex)
+        {
+            throw new Exception();
+        }
+        return casinoGames;
+    }
+    
+    private async Task SeedCasinoGames()
+    {
+        var casinoGameManager = ServerSystem.Instance?.Get<ICasinoGameManager>( ManagerNames.CasinoGameManager);
+        if (casinoGameManager == null)
+            return;
+        var currentCasinoGames = await casinoGameManager.GetAllCasinoGames();
+        //TODO dont do this way, check if each one in data exists and fix it
+        if( !currentCasinoGames.Any() )
+        {
+            foreach( var casinoGame in GetSeedCasinoGames())
+            {
+                await casinoGameManager.UpsertCasinoGame( casinoGame );
             }
         }
     }

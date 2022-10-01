@@ -1,4 +1,5 @@
 ﻿using SB.Server.Common.Managers;
+using SB.Server.Root.CasinoGames;
 using SB.Server.Root.Casinos;
 
 namespace SB.Server.WebApp;
@@ -33,6 +34,15 @@ public class ServerSystem
       if( casinoManager != null )
       {
         _services.Add( ManagerNames.CasinoManager, casinoManager );
+      }
+    }
+    config = Type.GetType( configuration.GetValue<string>("CasinoGame:Manager"));
+    if( config != null )
+    {
+      var casinoGameManager = ActivatorUtilities.CreateInstance( services, config, new object[] { configuration } ) as ICasinoGameManager;
+      if( casinoGameManager != null )
+      {
+        _services.Add( ManagerNames.CasinoGameManager, casinoGameManager );
       }
     }
     // config = Type.GetType( configuration["CasinoGame:Manager"] );

@@ -25,5 +25,22 @@
       "name": "Casino de Montreal",
       "countryCode": "CA"
     }
+  ],
+  "casinoGames": [
+    {
+      "id": "848ca127-c215-444d-aefd-a9211b87b40e",
+      "name": "Blackjack",
+      "hasSubType": false
+    },
+    {
+      "id": "9e9c3b46-8c74-414d-b9d5-564c37eb7003",
+      "name": "European Roulette",
+      "hasSubType": false
+    },
+    {
+      "id": "675641f0-618e-4b22-a084-9e638c557fa3",
+      "name": "Slot Machine",
+      "hasSubType": true
+    }
   ]
 }

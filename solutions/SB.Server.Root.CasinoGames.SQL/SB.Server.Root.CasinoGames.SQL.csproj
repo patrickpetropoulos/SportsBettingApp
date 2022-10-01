@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\SB.Server.Common.SQL\SB.Server.Common.SQL.csproj" />
+      <ProjectReference Include="..\..\SB.Server.Common\SB.Server.Common.csproj" />
+      <ProjectReference Include="..\..\SB.Server.Root\SB.Server.Root.csproj" />
+      <ProjectReference Include="..\SB.Server.Root.CasinoGames\SB.Server.Root.CasinoGames.csproj" />
+    </ItemGroup>
+
+</Project>

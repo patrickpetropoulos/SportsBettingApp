@@ -13,15 +13,15 @@ public static class ServicesSetup
 {
     public static IServiceCollection RegisterAllServices(this IServiceCollection services, IConfiguration configuration)
     {
-      services.RegisterSwagger();
-      services.RegisterCors();
-      services.RegisterIdentity(configuration);
-      services.RegisterAuthentication(configuration);
-      services.RegisterAuthorization();
-
-      return services;
+      return services
+        .RegisterSwagger()
+        .RegisterCors()
+        .RegisterIdentity(configuration)
+        .RegisterAuthentication(configuration)
+        .RegisterAuthorization();
     }
-    public static IServiceCollection RegisterSwagger(this IServiceCollection services)
+
+    private static IServiceCollection RegisterSwagger(this IServiceCollection services)
     {
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
@@ -80,7 +80,7 @@ public static class ServicesSetup
         return services;
     }
 
-    public static IServiceCollection RegisterCors(this IServiceCollection services)
+    private static IServiceCollection RegisterCors(this IServiceCollection services)
     {
       //TODO determine correct CORS policy, can we check if in development, or when we have react app manually put url
       services.AddCors( options => options.AddPolicy( "AllowAll", p => p.AllowAnyOrigin()
@@ -89,12 +89,12 @@ public static class ServicesSetup
 
       return services;
     }
-    
-    public static IServiceCollection RegisterIdentity(this IServiceCollection services, IConfiguration configuration)
+
+    private static IServiceCollection RegisterIdentity(this IServiceCollection services, IConfiguration configuration)
     {
       services.AddDbContext<ApplicationDbContext>( options =>
         options.UseSqlServer(
-          configuration.GetConnectionString( "Default" ),
+          configuration.GetConnectionString( "Default" ) ?? throw new InvalidOperationException(),
           b => b.MigrationsAssembly( typeof( ApplicationDbContext ).Assembly.FullName ) ) );
 
       services.AddIdentityCore<ApplicationUser>()
@@ -104,8 +104,8 @@ public static class ServicesSetup
 
       return services;
     }
-    
-    public static IServiceCollection RegisterAuthentication(this IServiceCollection services, IConfiguration configuration)
+
+    private static IServiceCollection RegisterAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
       services.AddAuthentication( JwtBearerDefaults.AuthenticationScheme )
         .AddJwtBearer( options =>
@@ -128,7 +128,7 @@ public static class ServicesSetup
       return services;
     }
     
-    public static IServiceCollection RegisterAuthorization(this IServiceCollection services)
+    private static IServiceCollection RegisterAuthorization(this IServiceCollection services)
     {
       services.AddAuthorization( options =>
       {
