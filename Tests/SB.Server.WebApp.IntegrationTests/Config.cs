@@ -106,9 +106,7 @@ public static class Config
   
   public static UserRecord? GetUserRecordFromConfig(string username)
   {
-    var users = _configuration?.GetSection("InitialUsers").Get<UserRecord[]>();
-
-    return users?.FirstOrDefault(c => c.Username.Equals(username));
+    return _configuration?.GetSection(username).Get<UserRecord>();
   }
   
   private static async Task<string> GetTokenByCredentials(string username, string password)

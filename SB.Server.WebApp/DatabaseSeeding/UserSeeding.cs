@@ -38,7 +38,11 @@ public class UserSeeding
 
   private async Task CreateUsersAndClaims( UserManager<ApplicationUser> userManager, IConfiguration configuration)
   {
-    var usersToCreate = configuration.GetSection("InitialUsers").Get<UserRecord[]>();
+    var usersToCreate = new List<UserRecord>
+    {
+      configuration.GetSection("PowerUser").Get<UserRecord>(),
+      configuration.GetSection("BasicAccessUser").Get<UserRecord>()
+    };
 
     foreach (var userRecord in usersToCreate)
     {
