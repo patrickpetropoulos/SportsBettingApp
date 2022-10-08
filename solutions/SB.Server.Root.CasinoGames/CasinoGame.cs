@@ -33,8 +33,8 @@ public class CasinoGame : ICasinoGame
     {
         if (obj == null || GetType() != obj.GetType())
             return false;
-        else
-            return obj is CasinoGame casinoGame
+        
+        return obj is CasinoGame casinoGame
                    && Name.Equals(casinoGame.Name)
                    && HasSubType.Equals(casinoGame.HasSubType);
     }

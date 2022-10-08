@@ -1,11 +1,10 @@
+using SB.Server.Root.Base;
+
 namespace SB.Server.Root.CasinoGames;
 
-public interface ICasinoGame
+public interface ICasinoGame : IEntity
 {
     Guid Id { get; set; }
     string Name { get; set; }
     bool HasSubType { get; set; }
-
-    //TODO move this to its own interface, gotta keep em separated video
-    bool BasicDataEquals(object? obj);
 }
