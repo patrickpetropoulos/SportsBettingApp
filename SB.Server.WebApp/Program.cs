@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
-using SB.Server.WebApp.Startup;
+using SB.Server.App.Common;
+
 
 namespace SB.Server.WebApp;
 

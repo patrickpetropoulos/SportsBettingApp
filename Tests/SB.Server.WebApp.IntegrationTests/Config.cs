@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
+using SB.Server.App.Common;
 using SB.Utilities;
 
 namespace SB.Server.WebApp.IntegrationTests;

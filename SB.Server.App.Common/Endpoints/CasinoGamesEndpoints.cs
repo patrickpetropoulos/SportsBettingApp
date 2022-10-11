@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using SB.Server.Common.Managers;
 using SB.Server.Root.CasinoGames;
 
-namespace SB.Server.WebApp.Endpoints;
+namespace SB.Server.App.Common.Endpoints;
 
 public static class CasinoGamesEndpoints
 {

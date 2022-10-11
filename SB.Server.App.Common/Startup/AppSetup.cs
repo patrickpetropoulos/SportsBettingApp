@@ -1,8 +1,11 @@
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using SB.Server.WebApp.Endpoints;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using SB.Server.App.Common.Endpoints;
 
-namespace SB.Server.WebApp.Startup;
+namespace SB.Server.App.Common;
 
 public static class AppSetup
 {

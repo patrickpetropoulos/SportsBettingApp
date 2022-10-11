@@ -1,7 +1,8 @@
 ﻿using System.Net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using static SB.Server.WebApp.AuthorizationConstants;
+using SB.Server.App.Common;
+using static SB.Server.App.Common.AuthorizationConstants;
 
 namespace SB.Server.WebApp.IntegrationTests;
 public class UsersTests

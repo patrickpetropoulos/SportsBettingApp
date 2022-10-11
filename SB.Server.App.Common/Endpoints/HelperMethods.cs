@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.JsonWebTokens;
 
-namespace SB.Server.WebApp.Endpoints;
+namespace SB.Server.App.Common.Endpoints;
 
 public static class HelperMethods
 {

@@ -1,12 +1,8 @@
-﻿using System.Reflection;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using SB.Server.Common.Managers;
-using SB.Server.Root.Casinos;
+using Microsoft.Extensions.Configuration;
 
-namespace SB.Server.WebApp;
+namespace SB.Server.App.Common;
 
 public class UserRecord
 {

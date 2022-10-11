@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
-namespace SB.Server.WebApp.Endpoints;
+namespace SB.Server.App.Common.Endpoints;
 
 public static class UsersEndpoints
 {

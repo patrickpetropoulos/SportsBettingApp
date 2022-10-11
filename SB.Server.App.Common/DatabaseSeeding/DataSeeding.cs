@@ -5,7 +5,7 @@ using SB.Server.Common.Managers;
 using SB.Server.Root.CasinoGames;
 using SB.Server.Root.Casinos;
 
-namespace SB.Server.WebApp;
+namespace SB.Server.App.Common;
 
 public class DataSeeding
 {
@@ -14,7 +14,7 @@ public class DataSeeding
     public DataSeeding()
     {
         var assembly = Assembly.GetExecutingAssembly();
-        using var stream = assembly.GetManifestResourceStream( "SB.Server.WebApp.DatabaseSeeding.SeedData.json" );
+        using var stream = assembly.GetManifestResourceStream( "SB.Server.App.Common.DatabaseSeeding.SeedData.json" );
         if (stream == null) return;
         using var reader = new StreamReader(stream);
         var text = reader.ReadToEnd();
