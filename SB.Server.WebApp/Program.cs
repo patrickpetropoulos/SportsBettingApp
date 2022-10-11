@@ -14,7 +14,7 @@ public class Program{
     JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
     JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.Clear();
 
-    builder.Services.RegisterAllServices(builder.Configuration);
+    builder.Services.RegisterAllServices(builder.Configuration, typeof(Program).Assembly.FullName);
     
     var app = builder.Build();
 

@@ -2,6 +2,7 @@
 using System.Net.Http.Json;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SB.Server.App.Common;
 using SB.Server.Root.Casinos;
 
 namespace SB.Server.WebApp.IntegrationTests;

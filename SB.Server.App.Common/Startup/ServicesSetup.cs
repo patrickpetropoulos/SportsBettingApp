@@ -13,12 +13,13 @@ namespace SB.Server.App.Common;
 
 public static class ServicesSetup
 {
-    public static IServiceCollection RegisterAllServices(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection RegisterAllServices(this IServiceCollection services, IConfiguration configuration
+      , string assemblyName)
     {
       return services
         .RegisterSwagger()
         .RegisterCors()
-        .RegisterIdentity(configuration)
+        .RegisterIdentity(configuration, assemblyName)
         .RegisterAuthentication(configuration)
         .RegisterAuthorization();
     }
@@ -92,12 +93,12 @@ public static class ServicesSetup
       return services;
     }
 
-    private static IServiceCollection RegisterIdentity(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection RegisterIdentity(this IServiceCollection services, IConfiguration configuration, string assemblyName)
     {
       services.AddDbContext<ApplicationDbContext>( options =>
         options.UseSqlServer(
           configuration.GetConnectionString( "Default" ) ?? throw new InvalidOperationException(),
-          b => b.MigrationsAssembly( typeof( ApplicationDbContext ).Assembly.FullName ) ) );
+          b => b.MigrationsAssembly( assemblyName) ) );
 
       services.AddIdentityCore<ApplicationUser>()
         .AddRoles<ApplicationRole>()

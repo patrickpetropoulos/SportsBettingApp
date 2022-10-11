@@ -6,14 +6,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SB.Server.App.Common;
-using SB.Server.WebApp;
 
 #nullable disable
 
-namespace SB.Server.WebApp.Migrations
+namespace SB.Server.App.React.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220904202309_InitialMigration")]
+    [Migration("20221011030726_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -128,7 +127,7 @@ namespace SB.Server.WebApp.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("SB.Server.WebApp.ApplicationRole", b =>
+            modelBuilder.Entity("SB.Server.App.Common.ApplicationRole", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -159,7 +158,7 @@ namespace SB.Server.WebApp.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("SB.Server.WebApp.ApplicationUser", b =>
+            modelBuilder.Entity("SB.Server.App.Common.ApplicationUser", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -230,7 +229,7 @@ namespace SB.Server.WebApp.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("SB.Server.WebApp.ApplicationRole", null)
+                    b.HasOne("SB.Server.App.Common.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -239,7 +238,7 @@ namespace SB.Server.WebApp.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("SB.Server.WebApp.ApplicationUser", null)
+                    b.HasOne("SB.Server.App.Common.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -248,7 +247,7 @@ namespace SB.Server.WebApp.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("SB.Server.WebApp.ApplicationUser", null)
+                    b.HasOne("SB.Server.App.Common.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -257,13 +256,13 @@ namespace SB.Server.WebApp.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.HasOne("SB.Server.WebApp.ApplicationRole", null)
+                    b.HasOne("SB.Server.App.Common.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SB.Server.WebApp.ApplicationUser", null)
+                    b.HasOne("SB.Server.App.Common.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -272,7 +271,7 @@ namespace SB.Server.WebApp.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("SB.Server.WebApp.ApplicationUser", null)
+                    b.HasOne("SB.Server.App.Common.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
