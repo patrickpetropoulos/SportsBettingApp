@@ -352,6 +352,10 @@ MigrationBackup/
 #Remove Rider specific settings
 .idea/
 
+#Remove Build files for React App
+SB.Server.ReactApp/ClientApp/build/
+
+#Remove all appSettings files with protected info
 SB.Server.WebApp/appsettings.Development.json
 Tests/SB.Server.WebApp.IntegrationTests/appsettings.Testing.json
 SB.Server.WebApp/appsettings.Testing.json
