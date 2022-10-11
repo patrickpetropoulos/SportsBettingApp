@@ -1,10 +1,10 @@
-﻿using System.Net.Http.Json;
-using System.Runtime;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
+using SB.Server.App.Common;
 using SB.Utilities;
+using System.Net.Http.Json;
 
 namespace SB.Server.WebApp.IntegrationTests;
 
@@ -13,7 +13,7 @@ public static class Config
 {
   private static WebApplicationFactory<Program> _app = null!;
   private static IConfiguration? _configuration;
-  
+
   //TODO Move all clients to their own parameters, therefore dont need to get them each time test is call
 
   // TODO can set up multiple clients with different claims/roles and test all of them
@@ -27,9 +27,9 @@ public static class Config
   {
     var client = _app.CreateClient();
 
-    var token = await GetTokenForUser("poweruser");
+    var token = await GetTokenForUser( "poweruser" );
 
-    client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {token}");
+    client.DefaultRequestHeaders.TryAddWithoutValidation( "Authorization", $"Bearer {token}" );
 
     return client;
   }
@@ -37,9 +37,9 @@ public static class Config
   {
     var client = _app.CreateClient();
 
-    var token = await GetTokenForUser("basicaccessuser");
+    var token = await GetTokenForUser( "basicaccessuser" );
 
-    client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {token}");
+    client.DefaultRequestHeaders.TryAddWithoutValidation( "Authorization", $"Bearer {token}" );
 
     return client;
   }
@@ -48,11 +48,11 @@ public static class Config
   public static void MyOneTime()
   {
     _app = new WebApplicationFactory<Program>()
-      .WithWebHostBuilder(builder =>
+      .WithWebHostBuilder( builder =>
       {
 
         //TODO eventually have other server/DB just for testing
-        builder.UseEnvironment("Development");
+        builder.UseEnvironment( "Development" );
 
         //var startup = new Startup( _configuration );
 
@@ -60,7 +60,7 @@ public static class Config
 
 
         // ... Configure test services
-      });
+      } );
 
 
 
@@ -79,44 +79,44 @@ public static class Config
     //Need this check for building and testing in azure devops
     //Since in azure substitution is done, can handle having separate db for testing.
     //For now in code, when running tests locally, do this check
-    if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "appsettings.Development.json")))
+    if( File.Exists( Path.Combine( Directory.GetCurrentDirectory(), "appsettings.Development.json" ) ) )
     {
-      Console.WriteLine("#### PATRICK : App settings Development Exists");
+      Console.WriteLine( "#### PATRICK : App settings Development Exists" );
       jsonPath = "appsettings.Development.json";
     }
 
     var configBuilder = new ConfigurationBuilder()
-      .SetBasePath(Directory.GetCurrentDirectory())
-      .AddJsonFile(jsonPath, true, true)
+      .SetBasePath( Directory.GetCurrentDirectory() )
+      .AddJsonFile( jsonPath, true, true )
       .AddEnvironmentVariables();
 
 
     _configuration = configBuilder.Build();
   }
 
-  public static async Task<string> GetTokenForUser(string username)
+  public static async Task<string> GetTokenForUser( string username )
   {
-    var user = GetUserRecordFromConfig(username);
-    if (user == null)
+    var user = GetUserRecordFromConfig( username );
+    if( user == null )
     {
       throw new NotSupportedException();
     }
-    return await GetTokenByCredentials(user.Username, user.Password);
+    return await GetTokenByCredentials( user.Username, user.Password );
   }
-  
-  public static UserRecord? GetUserRecordFromConfig(string username)
+
+  public static UserRecord? GetUserRecordFromConfig( string username )
   {
-    return _configuration?.GetSection(username).Get<UserRecord>();
+    return _configuration?.GetSection( username ).Get<UserRecord>();
   }
-  
-  private static async Task<string> GetTokenByCredentials(string username, string password)
+
+  private static async Task<string> GetTokenByCredentials( string username, string password )
   {
     var client = _app.CreateClient();
-    var response = await client.PostAsJsonAsync($"/token", new {Username = username, Password = password});
+    var response = await client.PostAsJsonAsync( $"/token", new { Username = username, Password = password } );
 
     var result = await response.Content.ReadAsStringAsync();
-    var json = JObject.Parse(result);
+    var json = JObject.Parse( result );
 
-    return JSONUtilities.GetString(json, "accessToken");
+    return JSONUtilities.GetString( json, "accessToken" );
   }
 }

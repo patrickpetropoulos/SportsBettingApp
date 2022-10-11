@@ -8,7 +8,7 @@ using SB.Server.App.Common;
 
 #nullable disable
 
-namespace SB.Server.WebApp.Migrations
+namespace SB.Server.App.React.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot

@@ -9,13 +9,13 @@ public static class StoredProcedures
     public const string Casino_DeleteCasino = "DeleteCasino";
 
     #endregion
-    
+
     #region CasinoGames
 
     public const string CasinoGames_SelectAllCasinoGames = "SelectAllCasinoGames";
     public const string CasinoGames_UpsertCasinoGames = "UpsertCasinoGame";
     public const string CasinoGames_DeleteCasinoGame = "DeleteCasinoGame";
-    
+
     #endregion
 
 }

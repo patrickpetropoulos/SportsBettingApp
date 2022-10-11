@@ -2,7 +2,7 @@
 
 namespace SB.Server.Root.Casinos;
 
-public interface ICasino: IEntity
+public interface ICasino : IEntity
 {
     Guid Id { get; set; }
     string Name { get; set; }
