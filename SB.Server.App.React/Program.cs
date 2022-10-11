@@ -30,7 +30,7 @@ app.MapControllerRoute(
 
 
 
-app.MapGet( "/api/casinos/",
+app.MapGet( "/api/testcasinos/",
         async () =>
         {
           return Enumerable.Range( 1, 100 ).Select( index => new WeatherForecast

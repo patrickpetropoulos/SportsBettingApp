@@ -361,5 +361,7 @@ Tests/SB.Server.WebApp.IntegrationTests/appsettings.Testing.json
 SB.Server.WebApp/appsettings.Testing.json
 SB.Server.ReactApp/appsettings.Development.json
 SB.Server.ReactApp/appsettings.Testing.json
+SB.Server.App.Api/appsettings.Development.json
+SB.Server.App.Api/appsettings.Testing.json
 
 .env.development.local
