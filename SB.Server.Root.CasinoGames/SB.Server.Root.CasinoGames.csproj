@@ -7,8 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\SB.Server.Root\SB.Server.Root.csproj" />
-      <ProjectReference Include="..\..\SB.Utilities\SB.Utilities.csproj" />
+      <ProjectReference Include="..\SB.Server.Root\SB.Server.Root.csproj" />
+      <ProjectReference Include="..\SB.Utilities\SB.Utilities.csproj" />
     </ItemGroup>
 
     <ItemGroup>

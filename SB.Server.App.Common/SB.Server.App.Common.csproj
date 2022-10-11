@@ -27,10 +27,10 @@
   
     <ItemGroup>
     <ProjectReference Include="..\SB.Server.Common.SQL\SB.Server.Common.SQL.csproj" />
+    <ProjectReference Include="..\SB.Server.Root.CasinoGames.SQL\SB.Server.Root.CasinoGames.SQL.csproj" />
+    <ProjectReference Include="..\SB.Server.Root.CasinoGames\SB.Server.Root.CasinoGames.csproj" />
     <ProjectReference Include="..\SB.Server.Root.Casinos.SQL\SB.Server.Root.Casinos.SQL.csproj" />
     <ProjectReference Include="..\SB.Server.Root.Casinos\SB.Server.Root.Casinos.csproj" />
-    <ProjectReference Include="..\solutions\SB.Server.Root.CasinoGames.SQL\SB.Server.Root.CasinoGames.SQL.csproj" />
-    <ProjectReference Include="..\solutions\SB.Server.Root.CasinoGames\SB.Server.Root.CasinoGames.csproj" />
   </ItemGroup>
   
   <ItemGroup>
