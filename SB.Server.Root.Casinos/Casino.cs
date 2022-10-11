@@ -8,7 +8,7 @@ public class Casino : ICasino
     public Guid Id { get; set; }
     public string Name { get; set; }
     public string CountryCode { get; set; }
-    
+
 
 
     public void FromJson( JObject json )
@@ -28,14 +28,14 @@ public class Casino : ICasino
 
         return json;
     }
-    
-    public bool BasicDataEquals(object? obj)
+
+    public bool BasicDataEquals( object? obj )
     {
-        if (obj == null || GetType() != obj.GetType())
+        if( obj == null || GetType() != obj.GetType() )
             return false;
         else
             return obj is Casino casino
-                   && Name.Equals(casino.Name)
-                   && CountryCode.Equals(casino.CountryCode);
+                   && Name.Equals( casino.Name )
+                   && CountryCode.Equals( casino.CountryCode );
     }
 }

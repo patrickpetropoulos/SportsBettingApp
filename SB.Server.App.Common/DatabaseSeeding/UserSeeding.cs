@@ -1,6 +1,6 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using System.Security.Claims;
 
 namespace SB.Server.App.Common;
 
@@ -22,17 +22,17 @@ public class UserSeeding
   private readonly UserManager<ApplicationUser> _userManager;
   private readonly IConfiguration _configuration;
 
-  public UserSeeding(UserManager<ApplicationUser> userManager, IConfiguration configuration)
+  public UserSeeding( UserManager<ApplicationUser> userManager, IConfiguration configuration )
   {
     _userManager = userManager;
     _configuration = configuration;
   }
   public async Task SeedDatabase()
   {
-    await CreateUsersAndClaims(_userManager, _configuration);
+    await CreateUsersAndClaims( _userManager, _configuration );
   }
 
-  private async Task CreateUsersAndClaims( UserManager<ApplicationUser> userManager, IConfiguration configuration)
+  private async Task CreateUsersAndClaims( UserManager<ApplicationUser> userManager, IConfiguration configuration )
   {
     var usersToCreate = new List<UserRecord>
     {
@@ -40,46 +40,46 @@ public class UserSeeding
       configuration.GetSection("BasicAccessUser").Get<UserRecord>()
     };
 
-    foreach (var userRecord in usersToCreate)
+    foreach( var userRecord in usersToCreate )
     {
-      var user = await CreateUser(userManager, userRecord);
-      if (user == null)
+      var user = await CreateUser( userManager, userRecord );
+      if( user == null )
       {
         //TODO log that couldn't be created
         //TODO move this to proper create user task
         continue;
       }
       //TODO need to investigate if claim can exist multiple times in db, with same userId-Type-Value pair
-      var currentClaims = await userManager.GetClaimsAsync(user);
-      
-      foreach (var claim in userRecord.Claims)
+      var currentClaims = await userManager.GetClaimsAsync( user );
+
+      foreach( var claim in userRecord.Claims )
       {
-        var currentClaim = currentClaims.FirstOrDefault(c => c.Type.Equals(claim.Type));
-        if (currentClaim == null)
+        var currentClaim = currentClaims.FirstOrDefault( c => c.Type.Equals( claim.Type ) );
+        if( currentClaim == null )
         {
-          await userManager.AddClaimAsync(user, new Claim(claim.Type, claim.Value));
+          await userManager.AddClaimAsync( user, new Claim( claim.Type, claim.Value ) );
         }
         else
         {
-          await userManager.ReplaceClaimAsync(user, currentClaim, new Claim(claim.Type, claim.Value));
+          await userManager.ReplaceClaimAsync( user, currentClaim, new Claim( claim.Type, claim.Value ) );
         }
       }
     }
   }
 
-  private async Task<ApplicationUser?> CreateUser(UserManager<ApplicationUser> userManager, UserRecord userRecord)
+  private async Task<ApplicationUser?> CreateUser( UserManager<ApplicationUser> userManager, UserRecord userRecord )
   {
     var user = await userManager.FindByEmailAsync( userRecord.Email );
-    if (user != null) return user;
-    user = await userManager.FindByNameAsync(userRecord.Username);
-    if (user != null) return user;
+    if( user != null ) return user;
+    user = await userManager.FindByNameAsync( userRecord.Username );
+    if( user != null ) return user;
     user = new ApplicationUser()
     {
       Email = userRecord.Email,
       UserName = userRecord.Username
     };
-          
-    var result = await userManager.CreateAsync(user, userRecord.Password);
+
+    var result = await userManager.CreateAsync( user, userRecord.Password );
     return result.Succeeded ? user : null;
   }
 }

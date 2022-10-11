@@ -8,7 +8,7 @@ public class CasinoGame : ICasinoGame
     public Guid Id { get; set; }
     public string Name { get; set; }
     public bool HasSubType { get; set; }
-    
+
 
 
     public void FromJson( JObject json )
@@ -28,14 +28,14 @@ public class CasinoGame : ICasinoGame
 
         return json;
     }
-    
-    public bool BasicDataEquals(object? obj)
+
+    public bool BasicDataEquals( object? obj )
     {
-        if (obj == null || GetType() != obj.GetType())
+        if( obj == null || GetType() != obj.GetType() )
             return false;
-        
+
         return obj is CasinoGame casinoGame
-                   && Name.Equals(casinoGame.Name)
-                   && HasSubType.Equals(casinoGame.HasSubType);
+                   && Name.Equals( casinoGame.Name )
+                   && HasSubType.Equals( casinoGame.HasSubType );
     }
 }

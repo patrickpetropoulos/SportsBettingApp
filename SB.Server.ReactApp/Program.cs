@@ -1,19 +1,14 @@
-using System.IdentityModel.Tokens.Jwt;
 using SB.Server.App.Common;
+using SB.Server.Common.Managers;
+using SB.Server.ReactApp;
+using SB.Server.ReactApp.Controllers;
+using SB.Server.Root.Casinos;
 
 var builder = WebApplication.CreateBuilder( args );
 
 // Add services to the container.
 
-//builder.Services.AddControllersWithViews();
-
-//Need to set this up if dont want all schemas text crap in JWT claims
-//https://github.com/dotnet/aspnetcore/issues/4660
-JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.Clear();
-
-builder.Services.RegisterAllServices( builder.Configuration, typeof( Program ).Assembly.FullName );
-
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
@@ -24,21 +19,30 @@ if( !app.Environment.IsDevelopment() )
   app.UseHsts();
 }
 
-
-//TODO eventually add in logging to ApplicationInsights
-ServerSystem.CreateInstance( app.Services, app.Configuration );
-
-AppSetup.SetupApplication( app );
-AppSetup.SeedApplication( app );
-
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-//app.MapControllerRoute(
-//    name: "default",
-//    pattern: "{controller}/{action=Index}/{id?}" );
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller}/{action=Index}/{id?}" );
+
+
+
+app.MapGet( "/api/casinos/",
+        async () =>
+        {
+          return Enumerable.Range( 1, 100 ).Select( index => new WeatherForecast
+          {
+            Date = DateTime.Now.AddDays( index ),
+            TemperatureC = Random.Shared.Next( -20, 55 ),
+            Summary = WeatherForecastController.Summaries[Random.Shared.Next( WeatherForecastController.Summaries.Length )]
+          } )
+          .ToArray();
+        } );
+
+
 
 app.MapFallbackToFile( "index.html" ); ;
 
