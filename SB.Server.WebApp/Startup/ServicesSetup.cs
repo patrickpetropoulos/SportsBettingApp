@@ -39,7 +39,7 @@ public static class ServicesSetup
         {
           Name = "Patrick Petropoulos",
           Email = "patrickperopoulos@gmail.com",
-          Url = new Uri( "https://www.linkedin.com/in/ignaciojv/" )
+          Url = new Uri( "https://www.linkedin.com/in/patrickpetropoulos/" )
         },
         License = new OpenApiLicense
         {
@@ -79,6 +79,12 @@ public static class ServicesSetup
               } );
 
     } );
+
+    //TODO 
+    //API VERSIONING
+    //Doesn't seem to work with react, will need to try again at some point
+    //https://www.infoworld.com/article/3671870/how-to-version-minimal-apis-in-aspnet-core-6.html
+    //Tim corey course on it
 
     return services;
   }
