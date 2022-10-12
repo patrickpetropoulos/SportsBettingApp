@@ -1,14 +1,15 @@
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using SB.Server.App.Common;
-using System.Text;
 using static SB.Server.App.Common.AuthorizationConstants;
 
-namespace SB.Server.WebApp;
+namespace SB.Server.App.Common.Startup;
 
 public static class ServicesSetup
 {

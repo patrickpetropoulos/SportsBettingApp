@@ -8,7 +8,7 @@
     }
   },
   "profiles": {
-    "SB.Server.WebApp": {
+    "SB.Server.App.Api": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": false,

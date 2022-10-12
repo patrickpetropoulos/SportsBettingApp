@@ -1,8 +1,11 @@
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
-using SB.Server.App.Common;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using SB.Server.App.Common.Endpoints;
 
-namespace SB.Server.WebApp;
+namespace SB.Server.App.Common.Startup;
 
 public static class AppSetup
 {
@@ -38,8 +41,7 @@ public static class AppSetup
   public static void SeedApplication( WebApplication app )
   {
     using var scope = app.Services.CreateScope();
-    //TODO stop migrating for right now    
-    //scope.ServiceProvider.GetService<ApplicationDbContext>()?.Database.Migrate();
+    scope.ServiceProvider.GetService<ApplicationDbContext>()?.Database.Migrate();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     //Seed Users
     var userSeeding = new UserSeeding( userManager, app.Configuration );
