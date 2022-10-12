@@ -27,8 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\SB.Server.App.Common\SB.Server.App.Common.csproj" />
-    <ProjectReference Include="..\..\TheOddsApi.Parser\TheOddsApi.Parser.csproj" />
+    <ProjectReference Include="..\TheOddsApi.Parser\TheOddsApi.Parser.csproj" />
   </ItemGroup>
 
 </Project>
