@@ -9,7 +9,7 @@ function App() {
         <img src={logo} className="App-logo" alt="logo" />
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
-          This line is written in patricks app.
+          This line is written in patricks app.  Second change.
         </p>
         <a
           className="App-link"
