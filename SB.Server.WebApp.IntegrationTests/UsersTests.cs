@@ -1,23 +1,31 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SB.Server.App.Common;
+using SB.Utilities;
+using System;
 using System.Net;
 using static SB.Server.App.Common.AuthorizationConstants;
 
 namespace SB.Server.WebApp.IntegrationTests;
 public class UsersTests
 {
-  #region CurrentUserTests
-  [Test]
-  public async Task GetCurrentUserInfo_AuthorizedUser_IsAdmin()
+  public string Endpoint = "";
+  public void SetEndpoint( string version )
   {
+    Endpoint = $"/api/{version}/users/";
+  }
+
+  #region CurrentUserTests
+  [TestCase( "v1" )]
+  public async Task GetCurrentUserInfo_AuthorizedUser_IsAdmin( string version )
+  {
+    SetEndpoint( version );
     var client = await Config.GetAuthorizedClientWithAdminAccessLevel();
-    var response = await client.GetAsync( "/api/users/current" );
+    var response = await client.GetAsync( Endpoint );
 
     Assert.AreEqual( HttpStatusCode.OK, response.StatusCode );
 
-    var result = await response.Content.ReadAsStringAsync();
-    var json = JObject.Parse( result );
+    var json = JsonHelper.GetObjectFromValueTag( await response.Content.ReadAsStringAsync() );
 
     var applicationUser = JsonConvert.DeserializeObject<ApplicationUser>( ( (JObject?)json?["user"] ).ToString() );
 
@@ -26,23 +34,21 @@ public class UsersTests
 
     var claims = JsonConvert.DeserializeObject<List<ClaimRecord>>( ( (JArray?)json?["claims"] ).ToString() );
 
-    //Assert.AreEqual(9, claims!.Count);
-
     var accessLevel = claims.FirstOrDefault( c => c.Type.Equals( Claim_AccessLevel_Type ) );
 
     Assert.AreEqual( accessLevel.Value, Claim_AccessLevel_Admin );
   }
 
-  [Test]
-  public async Task GetCurrentUserInfo_AuthorizedUser_IsNotAdmin()
+  [TestCase( "v1" )]
+  public async Task GetCurrentUserInfo_AuthorizedUser_IsNotAdmin( string version )
   {
+    SetEndpoint( version );
     var client = await Config.GetAuthorizedClientWithoutAdminAccessLevel();
-    var response = await client.GetAsync( "/api/users/current" );
+    var response = await client.GetAsync( Endpoint );
 
     Assert.AreEqual( HttpStatusCode.OK, response.StatusCode );
 
-    var result = await response.Content.ReadAsStringAsync();
-    var json = JObject.Parse( result );
+    var json = JsonHelper.GetObjectFromValueTag( await response.Content.ReadAsStringAsync() );
 
     var applicationUser = JsonConvert.DeserializeObject<ApplicationUser>( ( (JObject?)json?["user"] ).ToString() );
 
@@ -51,17 +57,15 @@ public class UsersTests
 
     var claims = JsonConvert.DeserializeObject<List<ClaimRecord>>( ( (JArray?)json?["claims"] ).ToString() );
 
-    //Assert.AreEqual(9, claims!.Count);
-
     var accessLevel = claims.FirstOrDefault( c => c.Type.Equals( Claim_AccessLevel_Type ) );
     Assert.AreEqual( accessLevel, null );
   }
-
-  [Test]
-  public async Task GetCurrentUserInfo_NotAuthorizedUser()
+  [TestCase( "v1" )]
+  public async Task GetCurrentUserInfo_NotAuthorizedUser( string version )
   {
+    SetEndpoint( version );
     var client = Config.GetClientWithUnauthorizedUser();
-    var response = await client.GetAsync( "/api/users/current" );
+    var response = await client.GetAsync( Endpoint );
 
     Assert.AreEqual( HttpStatusCode.Unauthorized, response.StatusCode );
   }

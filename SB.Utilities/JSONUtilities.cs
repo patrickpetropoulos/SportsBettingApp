@@ -447,5 +447,17 @@ public static class JsonHelper
         }
     }
 
+  public static JObject GetObjectFromValueTag(string result )
+  {
+    var json = JObject.Parse( result );
+    return (JObject)json["value"];
+  }
+
+  public static JArray GetArrayFromValueTag(string result )
+  {
+    var json = JObject.Parse( result );
+    return (JArray)json["value"];
+  }
+
 
 }

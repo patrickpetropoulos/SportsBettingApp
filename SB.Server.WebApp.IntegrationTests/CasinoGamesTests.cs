@@ -2,27 +2,35 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SB.Server.App.Common;
 using SB.Server.Root.CasinoGames;
+using SB.Utilities;
 using System.Net;
 
 namespace SB.Server.WebApp.IntegrationTests;
 
 public class CasinoGamesTests
 {
-  public static async Task<List<CasinoGame>> GetAllCasinoGames( HttpClient client )
+  public string Endpoint = "";
+  public void SetEndpoint( string version )
   {
-    var response = await client.GetAsync( "/api/casinogames/" );
+    Endpoint = $"/api/{version}/casinogames/";
+  }
+
+  public async Task<List<CasinoGame>> GetAllCasinoGames( HttpClient client )
+  {
+    var response = await client.GetAsync( Endpoint );
 
     Assert.AreEqual( HttpStatusCode.OK, response.StatusCode );
 
-    var result = await response.Content.ReadAsStringAsync();
-    var json = JObject.Parse( result );
+    var json = JsonHelper.GetObjectFromValueTag( await response.Content.ReadAsStringAsync() );
 
     return JsonConvert.DeserializeObject<List<CasinoGame>>( ( (JArray?)json?["casinogames"] ).ToString() );
   }
 
-  [Test]
-  public async Task GetAllCasinos_EnsureContainsFullSeedDataList()
+  [TestCase( "v1" )]
+  public async Task GetAllCasinos_EnsureContainsFullSeedDataList( string version )
   {
+    SetEndpoint( version );
+
     var client = await Config.GetAuthorizedClientWithoutAdminAccessLevel();
 
     var casinoGames = await GetAllCasinoGames( client );

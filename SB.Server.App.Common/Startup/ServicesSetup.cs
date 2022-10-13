@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,10 +19,12 @@ public static class ServicesSetup
   {
     return services
       .RegisterSwagger()
+      .RegisterApiVersioning()
       .RegisterCors()
       .RegisterIdentity( configuration, assemblyName )
       .RegisterAuthentication( configuration )
-      .RegisterAuthorization();
+      .RegisterAuthorization()
+      .RegisterLogging( configuration );
   }
 
   private static IServiceCollection RegisterSwagger( this IServiceCollection services )
@@ -31,6 +34,7 @@ public static class ServicesSetup
     //https://stackoverflow.com/a/62864495
     services.AddSwaggerGen( c =>
     {
+      //can have another for v2 later on
       c.SwaggerDoc( "v1", new OpenApiInfo
       {
         Version = "v1",
@@ -49,6 +53,25 @@ public static class ServicesSetup
         }
 
       } );
+      c.SwaggerDoc( "v2", new OpenApiInfo
+      {
+        Version = "v2",
+        Title = "v2 SportsBetting API",
+        Description = "SportsBetting API Swagger Surface",
+        Contact = new OpenApiContact
+        {
+          Name = "Patrick Petropoulos",
+          Email = "patrickperopoulos@gmail.com",
+          Url = new Uri( "https://www.linkedin.com/in/patrickpetropoulos/" )
+        },
+        License = new OpenApiLicense
+        {
+          Name = "MIT",
+          Url = new Uri( "https://github.com/ignaciojvig/ChatAPI/blob/master/LICENSE" )
+        }
+
+      } );
+
       c.AddSecurityDefinition( "Bearer", new OpenApiSecurityScheme
       {
         Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
@@ -86,6 +109,26 @@ public static class ServicesSetup
     //Doesn't seem to work with react, will need to try again at some point
     //https://www.infoworld.com/article/3671870/how-to-version-minimal-apis-in-aspnet-core-6.html
     //Tim corey course on it
+
+    return services;
+  }
+
+  private static IServiceCollection RegisterApiVersioning( this IServiceCollection services )
+  {
+    services.AddApiVersioning( o =>
+    {
+      o.AssumeDefaultVersionWhenUnspecified = true;
+      o.DefaultApiVersion = new( 1, 0 );
+      o.ReportApiVersions = true;
+
+    } );
+
+    services.AddVersionedApiExplorer(
+    options =>
+    {
+      options.GroupNameFormat = "'v'VVV";
+      options.SubstituteApiVersionInUrl = true;
+    } );
 
     return services;
   }
@@ -158,6 +201,13 @@ public static class ServicesSetup
         .RequireAuthenticatedUser()
         .Build();
     } );
+    return services;
+  }
+
+  private static IServiceCollection RegisterLogging( this IServiceCollection services, IConfiguration configuration )
+  {
+    services.AddApplicationInsightsTelemetry( configuration );
+
     return services;
   }
 }

@@ -1,38 +1,45 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SB.Server.App.Common;
 using SB.Server.Root.Casinos;
+using SB.Utilities;
 using System.Net;
 using System.Net.Http.Json;
 
 namespace SB.Server.WebApp.IntegrationTests;
 
 public class CasinosTests
-{
+{  
+  public string Endpoint = "";
+  public void SetEndpoint(string version )
+  {
+    Endpoint = $"/api/{version}/casinos/";
+  }
+
   public static Casino CreateTestCasino()
   {
     return new Casino()
     {
       Id = Guid.NewGuid(),
       CountryCode = "CA",
-      Name = "DELETE ME, IM TEST DATA"
+      Name = "DELETE ME, I'M TEST DATA"
     };
   }
-  public static async Task<List<Casino>> GetAllCasinos( HttpClient client )
+  public async Task<List<Casino>> GetAllCasinos( HttpClient client )
   {
-    var response = await client.GetAsync( "/api/casinos/" );
+    var response = await client.GetAsync( Endpoint );
 
     Assert.AreEqual( HttpStatusCode.OK, response.StatusCode );
 
-    var result = await response.Content.ReadAsStringAsync();
-    var json = JObject.Parse( result );
+    var json = JsonHelper.GetObjectFromValueTag( await response.Content.ReadAsStringAsync() );
 
-    return JsonConvert.DeserializeObject<List<Casino>>( ( (JArray?)json?["casinos"] ).ToString() );
+    return JsonConvert.DeserializeObject<List<Casino>>( ( (JArray?)json["casinos"] ).ToString() );
   }
 
-  public static async Task<Casino> CreateCasino( HttpClient client, Casino casino )
+  public async Task<Casino> CreateCasino( HttpClient client, Casino casino )
   {
-    var response = await client.PostAsJsonAsync( "/api/casinos/",
+    var response = await client.PostAsJsonAsync( Endpoint,
         new
         {
           Id = casino.Id,
@@ -42,15 +49,14 @@ public class CasinosTests
 
     Assert.AreEqual( HttpStatusCode.OK, response.StatusCode );
 
-    var result = await response.Content.ReadAsStringAsync();
-    var json = JObject.Parse( result );
+    var json = JsonHelper.GetObjectFromValueTag( await response.Content.ReadAsStringAsync() );
 
     return JsonConvert.DeserializeObject<Casino>( ( (JObject?)json?["casino"] ).ToString() );
   }
 
-  public static async Task<Casino> UpdateCasino( HttpClient client, Casino casino )
+  public async Task<Casino> UpdateCasino( HttpClient client, Casino casino )
   {
-    var response = await client.PutAsJsonAsync( $"/api/casinos/{casino.Id}",
+    var response = await client.PutAsJsonAsync( Endpoint + casino.Id,
         new
         {
           Id = casino.Id,
@@ -60,15 +66,14 @@ public class CasinosTests
 
     Assert.AreEqual( HttpStatusCode.OK, response.StatusCode );
 
-    var result = await response.Content.ReadAsStringAsync();
-    var json = JObject.Parse( result );
+    var json = JsonHelper.GetObjectFromValueTag( await response.Content.ReadAsStringAsync() );
 
     return JsonConvert.DeserializeObject<Casino>( ( (JObject?)json?["casino"] ).ToString() );
   }
 
-  public static async Task DeleteCasino( HttpClient client, Guid id )
+  public async Task DeleteCasino( HttpClient client, Guid id )
   {
-    var deleteResponse = await client.DeleteAsync( $"/api/casinos/{id}" );
+    var deleteResponse = await client.DeleteAsync( Endpoint + id );
 
     Assert.AreEqual( HttpStatusCode.OK, deleteResponse.StatusCode );
   }
@@ -81,9 +86,11 @@ public class CasinosTests
     }
   }
 
-  [Test]
-  public async Task GetAllCasinos_EnsureContainsFullSeedDataList()
+  [TestCase("v1")]
+  public async Task GetAllCasinos_EnsureContainsFullSeedDataList(string version)
   {
+    SetEndpoint( version );
+
     var client = await Config.GetAuthorizedClientWithoutAdminAccessLevel();
 
     var casinoList = await GetAllCasinos( client );
@@ -100,9 +107,11 @@ public class CasinosTests
     }
   }
 
-  [Test]
-  public async Task CreateCasino_ThenDelete_EnsureNotInNewListOfAllCasinos()
+  [TestCase( "v1" )]
+  public async Task CreateCasino_ThenDelete_EnsureNotInNewListOfAllCasinos( string version )
   {
+    SetEndpoint( version );
+
     var client = await Config.GetAuthorizedClientWithAdminAccessLevel();
     var casinoToCreate = CreateTestCasino();
 
@@ -118,9 +127,11 @@ public class CasinosTests
     ValidateCasinoNotInList( casinoList, casinoToCreate );
   }
 
-  [Test]
-  public async Task CreateCasino_ThenUpdateAndValidateChanges_ThenDelete_EnsureNotInNewListofAllCasinos()
+  [TestCase( "v1" )]
+  public async Task CreateCasino_ThenUpdateAndValidateChanges_ThenDelete_EnsureNotInNewListofAllCasinos( string version )
   {
+    SetEndpoint( version );
+
     var client = await Config.GetAuthorizedClientWithAdminAccessLevel();
     var casinoToCreate = CreateTestCasino();
 

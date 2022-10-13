@@ -117,6 +117,6 @@ public static class Config
     var result = await response.Content.ReadAsStringAsync();
     var json = JObject.Parse( result );
 
-    return JSONUtilities.GetString( json, "accessToken" );
+    return JSONUtilities.GetString( (JObject)json["value"], "accessToken" );
   }
 }

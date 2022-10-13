@@ -100,7 +100,7 @@ public class ServerSystem
   }
   public void SetLogger( ILoggerFactory loggerFactory )
   {
-
+    Get<ICasinoManager>( ManagerNames.CasinoManager )?.SetLogger( loggerFactory, ManagerNames.CasinoManager );
   }
 
 

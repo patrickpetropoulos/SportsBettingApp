@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using SB.Server.App.Common.Endpoints;
 
 namespace SB.Server.App.Common.Startup;
@@ -11,11 +12,17 @@ public static class AppSetup
 {
   public static void SetupApplication( WebApplication app )
   {
+    ServerSystem.Instance.SetLogger( app.Services.GetRequiredService<ILoggerFactory>() );
+
     // Configure the HTTP request pipeline.
     if( app.Environment.IsDevelopment() )
     {
       app.UseSwagger();
-      app.UseSwaggerUI();
+      app.UseSwaggerUI( opts =>
+      {
+        //opts.SwaggerEndpoint( "/swagger/v2/swagger.json", "v2" );
+        opts.SwaggerEndpoint( "/swagger/v1/swagger.json", "v1" );
+      } );
     }
     if( app.Environment.IsEnvironment( "Testing" ) )
     {
@@ -26,7 +33,9 @@ public static class AppSetup
     app.UseAuthentication();
     app.UseAuthorization();
 
-    MapAllEndpoints( app );
+    app.MapControllers();
+
+    //MapAllEndpoints( app );
   }
 
   private static void MapAllEndpoints( WebApplication app )

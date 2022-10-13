@@ -77,6 +77,8 @@ public class SqlCasinoManager : Manager, ICasinoManager
                         casinos.Add( casino );
                     }
                 }
+
+              _log.LogError( "I read all my casinos from DB" );
             }
             return casinos;
         }
@@ -107,7 +109,7 @@ public class SqlCasinoManager : Manager, ICasinoManager
         catch( SqlException e )
         {
             //TODO update name
-            //_log.LogError( e, StoredProcedures.Casino_UpsertCasino );
+            _log.LogError( e, StoredProcedures.Casino_UpsertCasino );
             throw;
         }
     }

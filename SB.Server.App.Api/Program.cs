@@ -2,7 +2,6 @@ using SB.Server.App.Common;
 using System.IdentityModel.Tokens.Jwt;
 using SB.Server.App.Common.Startup;
 
-
 namespace SB.Server.WebApp;
 
 public class Program
@@ -19,7 +18,6 @@ public class Program
     builder.Services.RegisterAllServices( builder.Configuration, typeof( Program ).Assembly.FullName );
 
     var app = builder.Build();
-
     //TODO eventually add in logging to ApplicationInsights
     ServerSystem.CreateInstance( app.Services, app.Configuration );
 
