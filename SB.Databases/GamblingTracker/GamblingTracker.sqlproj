@@ -71,6 +71,7 @@
     <Build Include="dbo\Stored Procedures\DeleteCasino.sql" />
     <Build Include="dbo\Stored Procedures\UpsertCasino.sql" />
     <Build Include="dbo\Stored Procedures\DeleteCasinoGame.sql" />
+    <Build Include="dbo\Stored Procedures\SelectAllGamblingSessionsByUser.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PublishLocations\Local-Dev-DB.publish.xml" />
