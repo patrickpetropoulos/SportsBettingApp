@@ -50,7 +50,7 @@ public static class AppSetup
   public static void SeedApplication( WebApplication app )
   {
     using var scope = app.Services.CreateScope();
-    scope.ServiceProvider.GetService<ApplicationDbContext>()?.Database.Migrate();
+    //scope.ServiceProvider.GetService<ApplicationDbContext>()?.Database.Migrate();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     //Seed Users
     var userSeeding = new UserSeeding( userManager, app.Configuration );

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SB.Server.App.Common;
+using SB.Server.App.Common.Endpoints;
 using SB.Server.Common.Managers;
 using SB.Server.Root.Casinos;
 using System;
@@ -20,34 +22,39 @@ namespace SB.Server.App.Api.Controllers.v1;
 [Produces( "application/json" )]
 public class CasinosController : ControllerBase
 {
+  private readonly UserManager<ApplicationUser> _userManager;
+
+  public ICasinoManager? _casinoManager { get; }
+
+  public CasinosController(UserManager<ApplicationUser> userManager)
+  {
+    _casinoManager = ServerSystem.Instance?.Get<ICasinoManager>(ManagerNames.CasinoManager);
+    _userManager = userManager;
+  }
+
   /// <summary>
-  /// Retrieves a specific product by unique id
+  /// Retrieves all casinos from Database
   /// </summary>
-  /// <remarks>Awesomeness!</remarks>
-  /// <response code="200">Product created</response>
-  /// <response code="400">Product has missing/invalid values</response>
-  /// <response code="500">Oops! Can't create your product right now</response>
+  /// <remarks></remarks>
+  /// <response code="200"></response>
+  /// <response code="500">Internal Server Error</response>
   [ProducesResponseType( typeof( Casino ), 200 )]
-  [ProducesResponseType( typeof( IDictionary<string, string> ), 400 )]
-  [ProducesResponseType( 500 )]
+  [ProducesResponseType( typeof( string ), 500 )]
   [HttpGet]
   [AllowAnonymous]
   public async Task<IActionResult> Get()
   {
-    var casinoManager = ServerSystem.Instance?.Get<ICasinoManager>( ManagerNames.CasinoManager );
-    if( casinoManager == null )
-      return new JsonResult( "error" );
-    var casinos = await casinoManager.GetAllCasinos();
+    if( _casinoManager == null)
+    {
+      HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+      return new JsonResult("Internal Error accessing casinos");
+    }
+    var casinos = await _casinoManager.GetAllCasinos();
 
-    HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-    return new JsonResult( new { casinosLister = casinos } );
-
-
-    //var result = Results.Ok(new { casinos } );
-
-    //return result;
-    //return Results.Ok( new { casinos } );
+    return new JsonResult( new { casinos = casinos} );
   }
+
+  //TODO add in method to get casino by ID
 
   [HttpPost]
   [Authorize( Policy = AuthorizationConstants.Claim_Policy_IsAdmin )]
