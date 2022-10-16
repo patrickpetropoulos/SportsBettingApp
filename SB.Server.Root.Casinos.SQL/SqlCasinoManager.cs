@@ -77,8 +77,6 @@ public class SqlCasinoManager : Manager, ICasinoManager
                         casinos.Add( casino );
                     }
                 }
-
-              _log.LogError( "I read all my casinos from DB" );
             }
             return casinos;
         }

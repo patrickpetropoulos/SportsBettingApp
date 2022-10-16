@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Serialization;
 using static SB.Server.App.Common.AuthorizationConstants;
 
 namespace SB.Server.App.Common.Startup;
@@ -17,6 +18,13 @@ public static class ServicesSetup
   public static IServiceCollection RegisterAllServices( this IServiceCollection services, IConfiguration configuration
     , string assemblyName )
   {
+
+    services.AddControllers()
+       .AddJsonOptions( options =>
+       {
+         options.JsonSerializerOptions.PropertyNamingPolicy = null;
+       } );
+
     return services
       .RegisterSwagger()
       .RegisterApiVersioning()
@@ -101,7 +109,8 @@ public static class ServicesSetup
                   new List<string>()
                 }
               } );
-
+      var filePath = Path.Combine( System.AppContext.BaseDirectory, "SB.Server.App.Api.xml" );
+      c.IncludeXmlComments( filePath );
     } );
 
     //TODO 
@@ -207,6 +216,24 @@ public static class ServicesSetup
   private static IServiceCollection RegisterLogging( this IServiceCollection services, IConfiguration configuration )
   {
     services.AddApplicationInsightsTelemetry( configuration );
+
+    //services.AddMvcCore( options =>
+    // {
+    //   options.RequireHttpsPermanent = true; // does not affect api requests
+    //   options.RespectBrowserAcceptHeader = true; // false by default
+    //                                              //options.OutputFormatters.RemoveType<HttpNoContentOutputFormatter>();
+
+    //   //remove these two below, but added so you know where to place them...
+    //   //options.OutputFormatters.Add( new YourCustomOutputFormatter() );
+    //   //options.InputFormatters.Add( new YourCustomInputFormatter() );
+    // } )
+    //    //.AddApiExplorer()
+    //    //.AddAuthorization()
+    //    .AddFormatterMappings()
+    //    //.AddCacheTagHelper()
+    //    //.AddDataAnnotations()
+    //    //.AddCors()
+    //    .AddJ();
 
     return services;
   }
