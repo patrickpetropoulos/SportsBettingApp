@@ -1,71 +1,52 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using SB.Server.App.Common;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
-using static SB.Server.App.Common.AuthorizationConstants;
 
-namespace SB.Server.App.Common.Endpoints;
+namespace SB.Server.App.Api.Controllers;
 
-public class UserRecord
+public class UserCredentials
 {
 	public string Username { get; set; }
 	public string Password { get; set; }
 }
 
-public static class TokenEndpoints
+
+[Route( "api/v{version:apiVersion}/[controller]" )]
+[ApiController]
+[ApiVersionNeutral]
+public class TokenController : ControllerBase
 {
-	public static WebApplication MapTokenEndpoints( this WebApplication app )
+	private readonly UserManager<ApplicationUser> userManager;
+	private readonly IConfiguration configuration;
+
+	public TokenController( UserManager<ApplicationUser> userManager,
+			  IConfiguration configuration )
 	{
-		app.MapGenerateToken();
-		app.MapTestToken();
-		return app;
+		this.userManager = userManager;
+		this.configuration = configuration;
 	}
 
-	private static void MapGenerateToken( this WebApplication app )
-	{
-		app.MapPost( "/token",
-			async ( UserManager<ApplicationUser> userManager,
-				IConfiguration configuration,
-				[FromBody] UserRecord userRecord ) =>
-					await CreateToken( userManager, configuration, userRecord ) )
-			.AllowAnonymous();
-	}
-
-	private static void MapTestToken( this WebApplication app )
-	{
-		app.MapGet( "/test",
-			async ( ClaimsPrincipal claimsPrincipal,
-				UserManager<ApplicationUser> userManager ) =>
-			{
-				var user = await HelperMethods.GetUserFromClaimsPrincipal( claimsPrincipal, userManager );
-				if( user == null )
-					return Results.NotFound();
-				var claims = HelperMethods.GetClaimRecordFromClaimPrincipal( claimsPrincipal );
-				var roles = await userManager.GetRolesAsync( user );
-
-				var result = new { user, roles, claims };
-
-				return Results.Ok( result );
-			} )
-			.RequireAuthorization( Claim_Policy_IsAdmin );
-	}
-
-	private static async Task<IResult> CreateToken( UserManager<ApplicationUser> userManager,
-		IConfiguration configuration,
-		UserRecord userRecord )
+	[HttpPost]
+	[AllowAnonymous]
+	public async Task<IActionResult> GenerateToken( [FromBody] UserCredentials userRecord )
 	{
 		var user = await IsValidLoginInfo( userManager, userRecord );
-		return user != null ?
-			Results.Ok( await GenerateToken( userManager, configuration, user ) ) :
-			Results.BadRequest();
+		if( user != null )
+		{
+			return new JsonResult( await GenerateToken( userManager, configuration, user ) );
+		}
+
+		HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+		return new JsonResult( "Internal Error Generating Token" );
 	}
 
-	private static async Task<ApplicationUser?> IsValidLoginInfo( UserManager<ApplicationUser> userManager, UserRecord userRecord )
+	private static async Task<ApplicationUser?> IsValidLoginInfo( UserManager<ApplicationUser> userManager, UserCredentials userRecord )
 	{
 		//Accepting username or email for login
 		var user = await userManager.FindByEmailAsync( userRecord.Username ) ?? await userManager.FindByNameAsync( userRecord.Username );
@@ -116,4 +97,5 @@ public static class TokenEndpoints
 
 		return output;
 	}
+
 }

@@ -34,6 +34,11 @@ public class SqlCasinoManager : Manager, ICasinoManager
         return await DatabaseUtilities.ExecuteAsync<List<ICasino>>( _connectionString,
                   async ( c ) => await SelectAllCasinos( c ) );
     }
+    public async Task<ICasino> GetCasinoByIdAsync( Guid id )
+    {
+        return await DatabaseUtilities.ExecuteAsync<ICasino>( _connectionString,
+            async ( c ) => await SelectCasinoById( c, id ) );
+    }
 
     public async Task<bool> UpsertCasino( ICasino casino )
     {
@@ -79,6 +84,36 @@ public class SqlCasinoManager : Manager, ICasinoManager
                 }
             }
             return casinos;
+        }
+        catch( Exception ex )
+        {
+            _log.LogError( ex, StoredProcedures.Casino_SelectAllCasinos );
+            throw;
+        }
+    }
+    public async Task<ICasino> SelectCasinoById( SqlConnection sqlConnection, Guid casinoId )
+    {
+        try
+        {
+            Casino casino = new Casino();
+            using( var sqlCmd = new SqlCommand( StoredProcedures.Casino_SelectCasinoById, sqlConnection )
+            {
+                CommandType = CommandType.StoredProcedure
+            } )
+            {
+
+                sqlCmd.Parameters.Add( new SqlParameter( "Id ", casinoId ) );
+                using( var sqlReader = await sqlCmd.ExecuteReaderAsync() )
+                {
+                    //TODO change this so only returns 1
+                    while( sqlReader.Read() )
+                    {
+                        ReadCasino( casino, sqlReader );
+                    }
+                }
+            }
+
+            return casino;
         }
         catch( Exception ex )
         {
@@ -136,7 +171,5 @@ public class SqlCasinoManager : Manager, ICasinoManager
             throw;
         }
     }
-
-
 
 }

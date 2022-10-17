@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[SelectCasinoGameById]
-	@casinoGameId UNIQUEIDENTIFIER
+	@Id UNIQUEIDENTIFIER
 AS
-	SELECT * from [dbo].[CasinoGames] where Id = @casinoGameId
+	SELECT * from [dbo].[CasinoGames] where Id = @Id
 RETURN 0

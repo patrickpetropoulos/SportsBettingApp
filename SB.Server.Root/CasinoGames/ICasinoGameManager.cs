@@ -4,10 +4,10 @@ namespace SB.Server.Root.CasinoGames;
 
 public interface ICasinoGameManager : IManager
 {
-    Task<List<ICasinoGame>> GetAllCasinoGames();
-    //country, state, etc
-    Task<bool> UpsertCasinoGame( ICasinoGame casinoGame );
+	Task<List<ICasinoGame>> GetAllCasinoGames();
+	//country, state, etc
+	Task<bool> UpsertCasinoGame( ICasinoGame casinoGame );
 
-    Task<bool> DeleteCasinoGame( Guid casinoId );
+	Task<bool> DeleteCasinoGame( Guid casinoId );
 
 }

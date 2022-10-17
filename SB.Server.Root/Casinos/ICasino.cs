@@ -4,7 +4,7 @@ namespace SB.Server.Root.Casinos;
 
 public interface ICasino : IEntity
 {
-    Guid Id { get; set; }
-    string Name { get; set; }
-    string CountryCode { get; set; }
+	Guid Id { get; set; }
+	string Name { get; set; }
+	string CountryCode { get; set; }
 }

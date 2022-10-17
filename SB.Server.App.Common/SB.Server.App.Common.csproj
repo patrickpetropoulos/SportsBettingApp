@@ -44,4 +44,8 @@
     <EmbeddedResource Include="DatabaseSeeding\SeedData.json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\v1\" />
+  </ItemGroup>
+
 </Project>

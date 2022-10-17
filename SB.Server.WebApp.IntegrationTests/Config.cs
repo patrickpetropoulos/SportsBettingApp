@@ -11,112 +11,112 @@ namespace SB.Server.WebApp.IntegrationTests;
 [SetUpFixture]
 public static class Config
 {
-  private static WebApplicationFactory<Program> _app = null!;
-  private static IConfiguration? _configuration;
+	private static WebApplicationFactory<Program> _app = null!;
+	private static IConfiguration? _configuration;
 
-  //TODO Move all clients to their own parameters, therefore dont need to get them each time test is call
+	//TODO Move all clients to their own parameters, therefore dont need to get them each time test is call
 
-  // TODO can set up multiple clients with different claims/roles and test all of them
-  // Have many "power users" for all testing of all endpoints
-  public static HttpClient GetClientWithUnauthorizedUser()
-  {
-    return _app.CreateClient();
-  }
+	// TODO can set up multiple clients with different claims/roles and test all of them
+	// Have many "power users" for all testing of all endpoints
+	public static HttpClient GetClientWithUnauthorizedUser()
+	{
+		return _app.CreateClient();
+	}
 
-  public static async Task<HttpClient> GetAuthorizedClientWithAdminAccessLevel()
-  {
-    var client = _app.CreateClient();
+	public static async Task<HttpClient> GetAuthorizedClientWithAdminAccessLevel( int version = 1 )
+	{
+		var client = _app.CreateClient();
 
-    var token = await GetTokenForUser( "poweruser" );
+		var token = await GetTokenForUser( "poweruser", version );
 
-    client.DefaultRequestHeaders.TryAddWithoutValidation( "Authorization", $"Bearer {token}" );
+		client.DefaultRequestHeaders.TryAddWithoutValidation( "Authorization", $"Bearer {token}" );
 
-    return client;
-  }
-  public static async Task<HttpClient> GetAuthorizedClientWithoutAdminAccessLevel()
-  {
-    var client = _app.CreateClient();
+		return client;
+	}
+	public static async Task<HttpClient> GetAuthorizedClientWithoutAdminAccessLevel( int version = 1 )
+	{
+		var client = _app.CreateClient();
 
-    var token = await GetTokenForUser( "basicaccessuser" );
+		var token = await GetTokenForUser( "basicaccessuser", version );
 
-    client.DefaultRequestHeaders.TryAddWithoutValidation( "Authorization", $"Bearer {token}" );
+		client.DefaultRequestHeaders.TryAddWithoutValidation( "Authorization", $"Bearer {token}" );
 
-    return client;
-  }
+		return client;
+	}
 
-  [OneTimeSetUp]
-  public static void MyOneTime()
-  {
-    _app = new WebApplicationFactory<Program>()
-      .WithWebHostBuilder( builder =>
-      {
+	[OneTimeSetUp]
+	public static void MyOneTime()
+	{
+		_app = new WebApplicationFactory<Program>()
+		  .WithWebHostBuilder( builder =>
+		  {
 
-        //TODO eventually have other server/DB just for testing
-        builder.UseEnvironment( "Development" );
+			  //TODO eventually have other server/DB just for testing
+			  builder.UseEnvironment( "Development" );
 
-        //var startup = new Startup( _configuration );
+			  //var startup = new Startup( _configuration );
 
-        //builder.UseStartup<Startup>();
-
-
-        // ... Configure test services
-      } );
+			  //builder.UseStartup<Startup>();
 
 
-
-    //Move all this out to it's own methods, so can create different users from appSetting based on roles,
-    //and make sure they are assigned those roles before running tests
-
-
-    //put code here to create app
-    //delete all users and stuff from database
-    //delete all other data from database
-    //seed database
-
-    var jsonPath = "appsettings.json";
-
-    //Check if testing file exists
-    //Need this check for building and testing in azure devops
-    //Since in azure substitution is done, can handle having separate db for testing.
-    //For now in code, when running tests locally, do this check
-    if( File.Exists( Path.Combine( Directory.GetCurrentDirectory(), "appsettings.Development.json" ) ) )
-    {
-      Console.WriteLine( "#### PATRICK : App settings Development Exists" );
-      jsonPath = "appsettings.Development.json";
-    }
-
-    var configBuilder = new ConfigurationBuilder()
-      .SetBasePath( Directory.GetCurrentDirectory() )
-      .AddJsonFile( jsonPath, true, true )
-      .AddEnvironmentVariables();
+			  // ... Configure test services
+		  } );
 
 
-    _configuration = configBuilder.Build();
-  }
 
-  public static async Task<string> GetTokenForUser( string username )
-  {
-    var user = GetUserRecordFromConfig( username );
-    if( user == null )
-    {
-      throw new NotSupportedException();
-    }
-    return await GetTokenByCredentials( user.Username, user.Password );
-  }
+		//Move all this out to it's own methods, so can create different users from appSetting based on roles,
+		//and make sure they are assigned those roles before running tests
 
-  public static UserRecord? GetUserRecordFromConfig( string username )
-  {
-    return _configuration?.GetSection( username ).Get<UserRecord>();
-  }
 
-  private static async Task<string> GetTokenByCredentials( string username, string password )
-  {
-    var client = _app.CreateClient();
-    var response = await client.PostAsJsonAsync( $"/token", new { Username = username, Password = password } );
+		//put code here to create app
+		//delete all users and stuff from database
+		//delete all other data from database
+		//seed database
 
-    var result = await response.Content.ReadAsStringAsync();
-    var json = JObject.Parse( result );
+		var jsonPath = "appsettings.json";
 
-    return JSONUtilities.GetString( (JObject)json["value"], "accessToken" );
-  }
+		//Check if testing file exists
+		//Need this check for building and testing in azure devops
+		//Since in azure substitution is done, can handle having separate db for testing.
+		//For now in code, when running tests locally, do this check
+		if( File.Exists( Path.Combine( Directory.GetCurrentDirectory(), "appsettings.Development.json" ) ) )
+		{
+			Console.WriteLine( "#### PATRICK : App settings Development Exists" );
+			jsonPath = "appsettings.Development.json";
+		}
+
+		var configBuilder = new ConfigurationBuilder()
+		  .SetBasePath( Directory.GetCurrentDirectory() )
+		  .AddJsonFile( jsonPath, true, true )
+		  .AddEnvironmentVariables();
+
+
+		_configuration = configBuilder.Build();
+	}
+
+	public static async Task<string> GetTokenForUser( string username, int version = 1 )
+	{
+		var user = GetUserRecordFromConfig( username );
+		if( user == null )
+		{
+			throw new NotSupportedException();
+		}
+		return await GetTokenByCredentials( user.Username, user.Password, version );
+	}
+
+	public static UserRecord? GetUserRecordFromConfig( string username )
+	{
+		return _configuration?.GetSection( username ).Get<UserRecord>();
+	}
+
+	private static async Task<string> GetTokenByCredentials( string username, string password, int version = 1 )
+	{
+		var client = _app.CreateClient();
+		var response = await client.PostAsJsonAsync( $"/api/v{version}/token", new { Username = username, Password = password } );
+
+		var result = await response.Content.ReadAsStringAsync();
+		var json = JObject.Parse( result );
+
+		return JSONUtilities.GetString( (JObject)json, "AccessToken" );
+	}
 }

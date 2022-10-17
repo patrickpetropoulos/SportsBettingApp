@@ -2,20 +2,21 @@
 
 public static class StoredProcedures
 {
-    #region Casinos
+	#region Casinos
 
-    public const string Casino_SelectAllCasinos = "SelectAllCasinos";
-    public const string Casino_UpsertCasino = "UpsertCasino";
-    public const string Casino_DeleteCasino = "DeleteCasino";
+	public const string Casino_SelectAllCasinos = "SelectAllCasinos";
+	public const string Casino_SelectCasinoById = "SelectCasinoById";
+	public const string Casino_UpsertCasino = "UpsertCasino";
+	public const string Casino_DeleteCasino = "DeleteCasino";
 
-    #endregion
+	#endregion
 
-    #region CasinoGames
+	#region CasinoGames
 
-    public const string CasinoGames_SelectAllCasinoGames = "SelectAllCasinoGames";
-    public const string CasinoGames_UpsertCasinoGames = "UpsertCasinoGame";
-    public const string CasinoGames_DeleteCasinoGame = "DeleteCasinoGame";
+	public const string CasinoGames_SelectAllCasinoGames = "SelectAllCasinoGames";
+	public const string CasinoGames_UpsertCasinoGames = "UpsertCasinoGame";
+	public const string CasinoGames_DeleteCasinoGame = "DeleteCasinoGame";
 
-    #endregion
+	#endregion
 
 }
