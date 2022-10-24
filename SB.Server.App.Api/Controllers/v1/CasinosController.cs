@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using SB.Server.App.Common;
 using SB.Server.Common.Managers;
 using SB.Server.Root.Casinos;
+using SB.Server.App.Api;
 using System.Net;
 
 namespace SB.Server.App.Api.Controllers.v1;
@@ -74,6 +74,8 @@ public class CasinosController : ControllerBase
 	[Authorize( Policy = AuthorizationConstants.Claim_Policy_IsAdmin )]
 	public async Task<IActionResult> Post( [FromBody] Casino casino )
 	{
+		//Do not allow User to choose ID we will be saving.
+		casino.Id = Guid.NewGuid();
 		if( _casinoManager == null )
 		{
 			HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;

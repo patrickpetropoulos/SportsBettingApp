@@ -1,11 +1,11 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using SB.Server.App.Common;
+using SB.Server.App.Api.DatabaseSeeding;
 using SB.Server.Root.Casinos;
 using System.Net;
 using System.Net.Http.Json;
 
-namespace SB.Server.WebApp.IntegrationTests;
+namespace SB.Server.App.Api.IntegrationTests;
 
 public class CasinosTests
 {
@@ -19,7 +19,6 @@ public class CasinosTests
 	{
 		return new Casino()
 		{
-			Id = Guid.NewGuid(),
 			CountryCode = "CA",
 			Name = "DELETE ME, I'M TEST DATA"
 		};
@@ -52,7 +51,6 @@ public class CasinosTests
 		var response = await client.PostAsJsonAsync( Endpoint,
 			new
 			{
-				Id = casino.Id,
 				CountryCode = casino.CountryCode,
 				Name = casino.Name
 			} );

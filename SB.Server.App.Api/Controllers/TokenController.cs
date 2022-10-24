@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using SB.Server.App.Common;
+using SB.Server.App.Api;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
@@ -16,30 +16,46 @@ public class UserCredentials
 	public string Password { get; set; }
 }
 
+public class Token
+{
+	public string AccessToken { get; set; }
+	public string Expiration { get; set; }
+}
+
 
 [Route( "api/v{version:apiVersion}/[controller]" )]
 [ApiController]
-[ApiVersionNeutral]
+[ApiVersion( "1.0" )]
+[ApiVersion( "2.0" )]
 public class TokenController : ControllerBase
 {
-	private readonly UserManager<ApplicationUser> userManager;
-	private readonly IConfiguration configuration;
+	private readonly UserManager<ApplicationUser> _userManager;
+	private readonly IConfiguration _configuration;
 
 	public TokenController( UserManager<ApplicationUser> userManager,
 			  IConfiguration configuration )
 	{
-		this.userManager = userManager;
-		this.configuration = configuration;
+		this._userManager = userManager;
+		this._configuration = configuration;
 	}
 
+	/// <summary>
+	/// Retrieves access token along with 
+	/// </summary>
+	/// <remarks></remarks>
+	/// <response code="200"></response>
+	/// <response code="500">Internal Server Error</response>
+	[ProducesResponseType( typeof( Token ), 200 )]
+	[ProducesResponseType( typeof( string ), 500 )]
 	[HttpPost]
 	[AllowAnonymous]
 	public async Task<IActionResult> GenerateToken( [FromBody] UserCredentials userRecord )
 	{
-		var user = await IsValidLoginInfo( userManager, userRecord );
+		var user = await IsValidLoginInfo( _userManager, userRecord );
+		//Todo separate code to handle unauthorized and Internal error
 		if( user != null )
 		{
-			return new JsonResult( await GenerateToken( userManager, configuration, user ) );
+			return new JsonResult( await GenerateToken( _userManager, _configuration, user ) );
 		}
 
 		HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
@@ -53,7 +69,7 @@ public class TokenController : ControllerBase
 		return await userManager.CheckPasswordAsync( user, userRecord.Password ) ? user : null;
 	}
 
-	private static async Task<dynamic> GenerateToken( UserManager<ApplicationUser> userManager,
+	private static async Task<Token> GenerateToken( UserManager<ApplicationUser> userManager,
 	  IConfiguration configuration, ApplicationUser user )
 	{
 		// var roles = from ur in context.UserRoles
@@ -89,7 +105,7 @@ public class TokenController : ControllerBase
 			DateTime.UtcNow.AddDays( 1 ) //When token will expire  TODO do a test that token expires
 			) );
 
-		var output = new
+		var output = new Token()
 		{
 			AccessToken = new JwtSecurityTokenHandler().WriteToken( token ),
 			Expiration = expirationDate.ToString(),

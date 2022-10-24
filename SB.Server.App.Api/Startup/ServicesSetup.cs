@@ -2,14 +2,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using static SB.Server.App.Common.AuthorizationConstants;
+using static SB.Server.App.Api.AuthorizationConstants;
 
-namespace SB.Server.App.Common.Startup;
+namespace SB.Server.App.Api.Startup;
 
 public static class ServicesSetup
 {
@@ -127,7 +125,6 @@ public static class ServicesSetup
 			o.AssumeDefaultVersionWhenUnspecified = true;
 			o.DefaultApiVersion = new( 1, 0 );
 			o.ReportApiVersions = true;
-
 		} );
 
 		services.AddVersionedApiExplorer(

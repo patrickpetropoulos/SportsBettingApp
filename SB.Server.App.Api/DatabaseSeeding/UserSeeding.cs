@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using System.Security.Claims;
-
-namespace SB.Server.App.Common;
+namespace SB.Server.App.Api.DatabaseSeeding;
 
 public class UserRecord
 {

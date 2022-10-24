@@ -2,11 +2,12 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
-using SB.Server.App.Common;
+using SB.Server.App.Api;
 using SB.Utilities;
 using System.Net.Http.Json;
+using SB.Server.App.Api.DatabaseSeeding;
 
-namespace SB.Server.WebApp.IntegrationTests;
+namespace SB.Server.App.Api.IntegrationTests;
 
 [SetUpFixture]
 public static class Config

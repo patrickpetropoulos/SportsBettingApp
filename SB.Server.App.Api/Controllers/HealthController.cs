@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace SB.Server.App.Api.Controllers;
 
-[Route( "api/v{version:apiVersion}/[controller]" )]
+[Route( "api/[controller]" )]
 [ApiController]
 [ApiVersionNeutral]
+[AllowAnonymous]
 public class HealthController : ControllerBase
 {
 	[HttpGet]

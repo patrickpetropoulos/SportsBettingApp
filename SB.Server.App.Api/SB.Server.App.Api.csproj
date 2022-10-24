@@ -4,11 +4,11 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>SB.Server.WebApp</RootNamespace>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.8" />
@@ -36,14 +36,23 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SB.Server.App.Common\SB.Server.App.Common.csproj" />
     <ProjectReference Include="..\SB.Server.Common.SQL\SB.Server.Common.SQL.csproj" />
+    <ProjectReference Include="..\SB.Server.Root.CasinoGames.SQL\SB.Server.Root.CasinoGames.SQL.csproj" />
+    <ProjectReference Include="..\SB.Server.Root.CasinoGames\SB.Server.Root.CasinoGames.csproj" />
     <ProjectReference Include="..\SB.Server.Root.Casinos.SQL\SB.Server.Root.Casinos.SQL.csproj" />
     <ProjectReference Include="..\SB.Server.Root.Casinos\SB.Server.Root.Casinos.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Remove="SeedData\Casino_Seed_Data.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="DatabaseSeeding\SeedData.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations" />
   </ItemGroup>
 
 </Project>

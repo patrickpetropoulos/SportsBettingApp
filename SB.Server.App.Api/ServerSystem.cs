@@ -1,11 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using SB.Server.Common.Managers;
+﻿using SB.Server.Common.Managers;
 using SB.Server.Root.CasinoGames;
 using SB.Server.Root.Casinos;
 
-namespace SB.Server.App.Common;
+namespace SB.Server.App.Api;
 
 public class ServerSystem
 {
@@ -101,6 +98,7 @@ public class ServerSystem
 	public void SetLogger( ILoggerFactory loggerFactory )
 	{
 		Get<ICasinoManager>( ManagerNames.CasinoManager )?.SetLogger( loggerFactory, ManagerNames.CasinoManager );
+		Get<ICasinoGameManager>( ManagerNames.CasinoGameManager )?.SetLogger( loggerFactory, ManagerNames.CasinoGameManager );
 	}
 
 

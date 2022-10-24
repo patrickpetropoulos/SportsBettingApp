@@ -1,8 +1,6 @@
-using SB.Server.App.Common;
-using SB.Server.App.Common.Startup;
+using SB.Server.App.Api.Startup;
 using System.IdentityModel.Tokens.Jwt;
-
-namespace SB.Server.WebApp;
+namespace SB.Server.App.Api;
 
 public class Program
 {

@@ -1,4 +1,4 @@
-﻿namespace SB.Server.App.Common;
+﻿namespace SB.Server.App.Api;
 
 public static class AuthorizationConstants
 {

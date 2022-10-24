@@ -4,17 +4,20 @@ using SB.Server.Common.Managers;
 using SB.Server.Root.CasinoGames;
 using SB.Server.Root.Casinos;
 using System.Reflection;
-
-namespace SB.Server.App.Common;
+namespace SB.Server.App.Api.DatabaseSeeding;
 
 public class DataSeeding
 {
-	private JObject _seedData;
+	private readonly JObject _seedData = null!;
 
+	/// <summary>
+	/// Constructor Method for class
+	/// Parses Seed dat from json file
+	/// </summary>
 	public DataSeeding()
 	{
 		var assembly = Assembly.GetExecutingAssembly();
-		using var stream = assembly.GetManifestResourceStream( "SB.Server.App.Common.DatabaseSeeding.SeedData.json" );
+		using var stream = assembly.GetManifestResourceStream( "SB.Server.App.Api.DatabaseSeeding.SeedData.json" );
 		if( stream == null ) return;
 		using var reader = new StreamReader( stream );
 		var text = reader.ReadToEnd();
@@ -26,9 +29,9 @@ public class DataSeeding
 		await SeedCasinos();
 		await SeedCasinoGames();
 	}
-	public List<Casino> GetSeedCasinos()
+	public List<Casino>? GetSeedCasinos()
 	{
-		var casinos = new List<Casino>();
+		List<Casino>? casinos;
 		try
 		{
 			casinos = JsonConvert.DeserializeObject<List<Casino>>( ( (JArray?)_seedData?["casinos"] ).ToString() );

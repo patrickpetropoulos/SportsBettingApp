@@ -1,17 +1,15 @@
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using SB.Server.App.Common.Endpoints;
+using SB.Server.App.Api.DatabaseSeeding;
+namespace SB.Server.App.Api.Startup;
 
-namespace SB.Server.App.Common.Startup;
-
+/// <summary>
+/// 
+/// </summary>
 public static class AppSetup
 {
 	public static void SetupApplication( WebApplication app )
 	{
-		ServerSystem.Instance.SetLogger( app.Services.GetRequiredService<ILoggerFactory>() );
+		ServerSystem.Instance?.SetLogger( app.Services.GetRequiredService<ILoggerFactory>() );
 
 		// Configure the HTTP request pipeline.
 		if( app.Environment.IsDevelopment() )
@@ -19,7 +17,7 @@ public static class AppSetup
 			app.UseSwagger();
 			app.UseSwaggerUI( opts =>
 			{
-				//opts.SwaggerEndpoint( "/swagger/v2/swagger.json", "v2" );
+				opts.SwaggerEndpoint( "/swagger/v2/swagger.json", "v2" );
 				opts.SwaggerEndpoint( "/swagger/v1/swagger.json", "v1" );
 			} );
 		}
@@ -33,17 +31,6 @@ public static class AppSetup
 		app.UseAuthorization();
 
 		app.MapControllers();
-
-		//MapAllEndpoints( app );
-	}
-
-	private static void MapAllEndpoints( WebApplication app )
-	{
-		//Mapping Endpoints
-		app.MapTokenEndpoints()
-			.MapUsersEndpoints()
-			.MapCasinosEndpoints()
-			.MapCasinoGamesEndpoints();
 	}
 
 	public static void SeedApplication( WebApplication app )

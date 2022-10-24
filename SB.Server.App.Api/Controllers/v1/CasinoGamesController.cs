@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using SB.Server.App.Common;
 using SB.Server.Common.Managers;
 using SB.Server.Root.CasinoGames;
+using SB.Server.App.Api;
 using System.Net;
 
 namespace SB.Server.App.Api.Controllers.v1;
@@ -22,6 +22,14 @@ public class CasinoGamesController : ControllerBase
 		_userManager = userManager;
 	}
 
+	/// <summary>
+	/// Retrieves all casino Games from Database
+	/// </summary>
+	/// <remarks></remarks>
+	/// <response code="200"></response>
+	/// <response code="500">Internal Server Error</response>
+	[ProducesResponseType( typeof( CasinoGame ), 200 )]
+	[ProducesResponseType( typeof( string ), 500 )]
 	[HttpGet]
 	[AllowAnonymous]
 	public async Task<IActionResult> Get()
@@ -29,7 +37,7 @@ public class CasinoGamesController : ControllerBase
 		if( _casinoGameManager == null )
 		{
 			HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-			return new JsonResult( "Internal Error accessing casinos" );
+			return new JsonResult( "Internal Error accessing casino games" );
 		}
 		var casinoGames = await _casinoGameManager.GetAllCasinoGames();
 

@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using SB.Server.App.Common;
-using SB.Server.App.Common.Endpoints;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.JsonWebTokens;
+using SB.Server.App.Api.DatabaseSeeding;
 using System.Net;
+using System.Security.Claims;
 
 namespace SB.Server.App.Api.Controllers.v1;
 
@@ -20,7 +22,7 @@ public class UsersController : ControllerBase
 	[HttpGet]
 	public async Task<IActionResult> Get()
 	{
-		var user = await HelperMethods.GetUserFromClaimsPrincipal( User, userManager );
+		var user = await GetUserFromClaimsPrincipal( User, userManager );
 		if( user == null )
 		{
 			HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
@@ -51,6 +53,31 @@ public class UsersController : ControllerBase
 		//}
 
 		return Results.Forbid();
+	}
+	
+	public static async Task<ApplicationUser?> GetUserFromClaimsPrincipal( ClaimsPrincipal claimsPrincipal, UserManager<ApplicationUser> userManager )
+	{
+		var userId = Guid.Parse( claimsPrincipal.Claims.First( c => c.Type.Equals( JwtRegisteredClaimNames.Sub ) ).Value );
+		var user = await userManager.Users.FirstOrDefaultAsync( c => c.Id.Equals( userId ) );
+		if( user != null )
+			return user;
+
+		var username = claimsPrincipal.Claims.First( c => c.Type.Equals( JwtRegisteredClaimNames.Name ) ).Value;
+		user = await userManager.Users.FirstOrDefaultAsync( c => c.Email.Equals( username ) );
+		if( user != null )
+			return user;
+
+		var userEmail = claimsPrincipal.Claims.First( c => c.Type.Equals( JwtRegisteredClaimNames.Email ) ).Value;
+		user = await userManager.Users.FirstOrDefaultAsync( c => c.Email.Equals( userEmail ) );
+		if( user != null )
+			return user;
+
+		return null;
+	}
+
+	public static List<ClaimRecord> GetClaimRecordFromClaimPrincipal( ClaimsPrincipal claimsPrincipal )
+	{
+		return claimsPrincipal.Claims.Select( c => new ClaimRecord() { Type = c.Type, Value = c.Value } ).ToList();
 	}
 
 

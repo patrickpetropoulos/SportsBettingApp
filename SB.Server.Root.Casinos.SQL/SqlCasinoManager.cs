@@ -23,33 +23,27 @@ public class SqlCasinoManager : Manager, ICasinoManager
         base.SetLogger( loggerFactory, name );
     }
 
-    public async Task<string> GetCasinos()
-    {
-        await Task.Delay( 1000 );
-        return "Hello from SqlCasinoManager";
-    }
-
     public async Task<List<ICasino>> GetAllCasinos()
     {
-        return await DatabaseUtilities.ExecuteAsync<List<ICasino>>( _connectionString,
+        return await DatabaseUtilities.ExecuteAsync( _connectionString,
                   async ( c ) => await SelectAllCasinos( c ) );
     }
     public async Task<ICasino> GetCasinoByIdAsync( Guid id )
     {
-        return await DatabaseUtilities.ExecuteAsync<ICasino>( _connectionString,
+        return await DatabaseUtilities.ExecuteAsync( _connectionString,
             async ( c ) => await SelectCasinoById( c, id ) );
     }
 
     public async Task<bool> UpsertCasino( ICasino casino )
     {
-        return await DatabaseUtilities.ExecuteAsync<bool>( _connectionString,
+        return await DatabaseUtilities.ExecuteAsync( _connectionString,
           async ( c ) => await UpsertCasino( c, casino ) );
     }
 
     public async Task<bool> DeleteCasino( Guid casinoId )
     {
         //what to do with int??? move this logic up, have an insert call???
-        return await DatabaseUtilities.ExecuteAsync<bool>( _connectionString,
+        return await DatabaseUtilities.ExecuteAsync( _connectionString,
           async ( c ) => await DeleteCasino( c, casinoId ) );
     }
 

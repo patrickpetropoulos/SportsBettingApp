@@ -1,10 +1,11 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using SB.Server.App.Common;
+using SB.Server.App.Api;
 using System.Net;
-using static SB.Server.App.Common.AuthorizationConstants;
+using SB.Server.App.Api.DatabaseSeeding;
+using static SB.Server.App.Api.AuthorizationConstants;
 
-namespace SB.Server.WebApp.IntegrationTests;
+namespace SB.Server.App.Api.IntegrationTests;
 public class UsersTests
 {
 	public string Endpoint = "";

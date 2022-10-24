@@ -1,10 +1,10 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using SB.Server.App.Common;
+using SB.Server.App.Api.DatabaseSeeding;
 using SB.Server.Root.CasinoGames;
 using System.Net;
 
-namespace SB.Server.WebApp.IntegrationTests;
+namespace SB.Server.App.Api.IntegrationTests;
 
 public class CasinoGamesTests
 {
