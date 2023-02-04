@@ -23,6 +23,10 @@ public class Token
 }
 
 
+/// <summary>
+/// Token Controller class
+/// Call to generate token
+/// </summary>
 [Route( "api/v{version:apiVersion}/[controller]" )]
 [ApiController]
 [ApiVersion( "1.0" )]
@@ -35,8 +39,8 @@ public class TokenController : ControllerBase
 	public TokenController( UserManager<ApplicationUser> userManager,
 			  IConfiguration configuration )
 	{
-		this._userManager = userManager;
-		this._configuration = configuration;
+		_userManager = userManager;
+		_configuration = configuration;
 	}
 
 	/// <summary>
